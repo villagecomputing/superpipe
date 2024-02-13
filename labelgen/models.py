@@ -1,0 +1,8 @@
+gpt4 = "gpt-4-turbo-preview"
+gpt35 = "gpt-3.5-turbo-0125"
+mixtral = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+mistral = "mistralai/Mistral-7B-Instruct-v0.1"
+codellama = "togethercomputer/CodeLlama-34b-Instruct"
+llama270b = "meta-llama/Llama-2-70b-chat-hf"
+stripedhyena = "togethercomputer/StripedHyena-Nous-7B"
+discomixtral = "DiscoResearch/DiscoLM-mixtral-8x7b-v2"

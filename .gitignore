@@ -1,0 +1,10 @@
+.env
+.chroma
+
+**/__pycache__/**
+*.pyc
+
+*.csv
+*.xlsx
+
+data/**
