@@ -7,4 +7,4 @@
 *.csv
 *.xlsx
 
-data/**
+dist/**

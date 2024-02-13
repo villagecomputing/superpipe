@@ -1,5 +1,5 @@
 from openai import OpenAI
-from labelgen.models import *
+from labelkit.models import *
 
 # TODO: add support for non-openai providers
 

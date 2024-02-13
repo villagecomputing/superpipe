@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
 import faiss
-from labelgen.steps import Step
+from labelkit.steps import Step
 from util import append_dict_to_df
 
 

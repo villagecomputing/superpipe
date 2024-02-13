@@ -1,9 +1,9 @@
 from typing import Callable, Union, Dict
 import pandas as pd
 from pydantic import BaseModel
-from labelgen.steps import Step, T
-from labelgen.llm import get_structured_llm_response, StructuredLLMResponse
-from labelgen.pydantic import describe_pydantic_model
+from labelkit.steps import Step, T
+from labelkit.llm import get_structured_llm_response, StructuredLLMResponse
+from labelkit.pydantic import describe_pydantic_model
 
 
 class LLMStepStatistics(BaseModel):

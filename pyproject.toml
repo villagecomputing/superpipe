@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "labelgen"
-version = "0.0.1"
+name = "labelkit"
+version = "0.0.2"
 description = "build unstructured to structured data transformation pipelines"
 authors = ["Aman Dhesi <aman@stelolabs.com>"]
 license = "MIT"
-packages = [{ include = "labelgen" }]
+packages = [{ include = "labelkit" }]
 readme = "README.md"
-repository = "https://github.com/villagecomputing/labelgen"
+repository = "https://github.com/villagecomputing/labelkit"
 
 
 [tool.poetry.dependencies]
