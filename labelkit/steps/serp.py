@@ -11,7 +11,8 @@ class SERPEnrichmentStep(Step):
                  prompt: Callable[[Union[pd.Series, Dict]], str],
                  postprocess=None,
                  name=None):
-        super().__init__(name, prompt=prompt, postprocess=postprocess)
+        # TODO: currently base step expects out_model to be passed, but it is not needed here
+        super().__init__(None, name, prompt=prompt, postprocess=postprocess)
 
     def _get_search_results(self, q):
         url = "https://google.serper.dev/search"

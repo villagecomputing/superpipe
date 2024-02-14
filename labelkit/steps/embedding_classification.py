@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
 import faiss
-from labelkit.steps import Step
-from util import append_dict_to_df
+from . import Step
+from labelkit.util import append_dict_to_df
 
 
 class EmbeddingClassificationStep(Step):

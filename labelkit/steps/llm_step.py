@@ -66,6 +66,7 @@ class LLMStep(Step):
                 compiled_prompt = self.compile_structured_prompt(row)
                 response = self.prompt_llm(compiled_prompt)
             except Exception as e:
+                # TODO: need better error logging here include stacktrace
                 response = StructuredLLMResponse(
                     success=False, error=str(e), latency=0)
             self._update_statistics(response)
