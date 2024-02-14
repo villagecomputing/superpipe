@@ -18,7 +18,7 @@ class CustomStep(Step):
             for field in fields:
                 data[field] = transformed_series.apply(lambda x: x[field])
         else:
-            transformed = transform(data)
+            transformed: T = transform(data)
             for field in fields:
-                data[field] = transformed[field]
+                data[field] = transformed.model_dump()[field]
         return data

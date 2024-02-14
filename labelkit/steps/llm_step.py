@@ -86,6 +86,6 @@ class LLMStep(Step):
             new_fields = data.apply(lambda x: pd.Series(_apply(x)), axis=1)
             data[new_fields.columns] = new_fields
         else:
-            data = {**data, **_apply(data)}
+            data.update(_apply(data))
 
         return data

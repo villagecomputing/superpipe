@@ -47,5 +47,5 @@ class EmbeddingClassificationStep(Step):
         if isinstance(data, pd.DataFrame):
             append_dict_to_df(data, categories)
         else:
-            data = {**data, **categories[0]}
+            data.update(categories[0])
         return data
