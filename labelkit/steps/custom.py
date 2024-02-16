@@ -11,7 +11,7 @@ class CustomStep(Step):
         super().__init__(out_model, name, transform=transform)
 
     def apply(self, data: Union[pd.DataFrame, Dict]):
-        fields = self.out_model.model_fields().keys()
+        fields = self.out_model.model_fields.keys()
         transform = self.params.get('transform')
         if isinstance(data, pd.DataFrame):
             transformed_series = data.apply(transform, axis=1)
