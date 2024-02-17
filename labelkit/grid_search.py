@@ -36,10 +36,7 @@ class GridSearch:
         for i, params in enumerate(self.params_list):
             print(f"Iteration {i+1} of {len(self.params_list)}")
             print("Params: ", params)
-            for step in self.pipeline.steps:
-                global_params = params.get('global', {})
-                step_params = params.get(step.name, {})
-                step.update_params({**global_params, **step_params})
+            self.pipeline.update_params(params)
             df_result = self.pipeline.apply(df.copy())
             index = hash(json.dumps(params, sort_keys=True))
             if output_dir is not None:
