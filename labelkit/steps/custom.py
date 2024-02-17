@@ -1,24 +1,30 @@
-from typing import Union, Dict, Callable
+from typing import Union, Dict, Callable, TypeVar, Generic, TypedDict
+from pydantic import BaseModel
 import pandas as pd
-from .step import Step, T
+from .step import Step
+from ..util import validate_dict
+
+T = TypeVar('T', bound=BaseModel)
 
 
-class CustomStep(Step):
+class CustomStepParams(TypedDict):
+    transform: Callable[[Union[pd.Series, Dict]], Dict]
+
+
+class CustomStep(Step, Generic[T]):
     def __init__(self,
+                 params: CustomStepParams,
                  out_model: T,
-                 transform: Callable[[Union[pd.Series, Dict]], T],
                  name: str = None):
-        super().__init__(out_model, name, transform=transform)
+        super().__init__(name)
+        validate_dict(params, CustomStepParams)
+        self.out_model = out_model
+        self.params = params
 
-    def apply(self, data: Union[pd.DataFrame, Dict]):
+    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+        transform = self.params['transform']
         fields = self.out_model.model_fields.keys()
-        transform = self.params.get('transform')
-        if isinstance(data, pd.DataFrame):
-            transformed_series = data.apply(transform, axis=1)
-            for field in fields:
-                data[field] = transformed_series.apply(lambda x: x[field])
-        else:
-            transformed: T = transform(data)
-            for field in fields:
-                data[field] = transformed.model_dump()[field]
-        return data
+        transformed = transform(row)
+        return {
+            field: transformed[field] for field in fields
+        }

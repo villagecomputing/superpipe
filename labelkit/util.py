@@ -1,4 +1,5 @@
-import json
+from typing import TypedDict, Type, Dict, get_type_hints
+from pydantic import create_model
 
 
 def append_dict_to_df(df, dict_list):
@@ -7,18 +8,8 @@ def append_dict_to_df(df, dict_list):
     return df
 
 
-def extract_json_from_string(input_string):
-    # fix bug with anyscale/mixtral
-    input_string = input_string.replace("\\", "")
-    start_index = input_string.find('{')
-
-    if start_index != -1:
-        substring = input_string[start_index:]
-        end_index = substring.find('}')
-        if end_index > 0:
-            json_string = substring[:end_index + 1]
-            return json.loads(json_string)
-        else:
-            raise json.JSONDecodeError("No closing brace found")
-    else:
-        raise json.JSONDecodeError("No opening brace found")
+def validate_dict(dict: Dict, type: Type[TypedDict]) -> Dict:
+    field_definitions = get_type_hints(type)
+    pydantic_model = create_model(
+        type.__name__, **{k: (v, ...) for k, v in field_definitions.items()})
+    pydantic_model.model_validate(dict)

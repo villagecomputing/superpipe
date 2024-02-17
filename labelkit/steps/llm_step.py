@@ -1,9 +1,12 @@
-from typing import Callable, Union, Dict
+from typing import TypedDict, Callable, Union, Dict, TypeVar, Generic
 import pandas as pd
 from pydantic import BaseModel
-from labelkit.steps import Step, T
+from labelkit.steps import Step
 from labelkit.llm import get_structured_llm_response, StructuredLLMResponse
 from labelkit.pydantic import describe_pydantic_model
+from labelkit.util import validate_dict
+
+T = TypeVar('T', bound=BaseModel)
 
 
 class LLMStepStatistics(BaseModel):
@@ -22,14 +25,21 @@ Return your response in the format given below as a Pydantic model schema:
 """
 
 
-class LLMStep(Step):
+class LLMStepParams(TypedDict):
+    model: str
+    prompt: Callable[[Union[Dict, pd.Series]], str]
+
+
+class LLMStep(Step, Generic[T]):
     def __init__(
             self,
+            params: LLMStepParams,
             out_model: T,
-            model: str,
-            prompt: Callable[[Union[pd.Series, Dict]], str],
             name: str = None):
-        super().__init__(out_model, name, model=model, prompt=prompt)
+        super().__init__(name)
+        validate_dict(params, LLMStepParams)
+        self.params = params
+        self.out_model = out_model
         self.statistics = LLMStepStatistics()
 
     def update_params(self, params):
@@ -46,46 +56,30 @@ class LLMStep(Step):
             self.statistics.num_failure += 1
 
     def compile_structured_prompt(self, input: dict):
-        prompt = self.params.get('prompt')
+        prompt = self.params['prompt']
         prompt_main = prompt(input)
         output_schema = describe_pydantic_model(self.out_model)
         return BASE_PROMPT.format(prompt_main=prompt_main, output_schema=output_schema)
 
-    def prompt_llm(self, prompt):
-        model = self.params.get('model')
-        if not model:
-            raise ValueError('Must set model param')
-        return get_structured_llm_response(prompt, model)
-
-    def apply(self, data: Union[pd.DataFrame, Dict]):
-        name = self.name
+    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+        model = self.params['model']
         fields = self.out_model.model_fields.keys()
-
-        def _apply(row):
-            try:
-                compiled_prompt = self.compile_structured_prompt(row)
-                response = self.prompt_llm(compiled_prompt)
-            except Exception as e:
-                # TODO: need better error logging here include stacktrace
-                response = StructuredLLMResponse(
-                    success=False, error=str(e), latency=0)
-            self._update_statistics(response)
-            result = {f"__{name}__": response.model_dump()}
-            if response.success:
-                content = response.content
-                for field in fields:
-                    # TODO: handle missing fields instead of printing
-                    if field not in content:
-                        print(
-                            f"Step {name}: Missing field {field} in response {content}")
-                    val = content.get(field)
-                    result[field] = val or ""
-            return result
-
-        if isinstance(data, pd.DataFrame):
-            new_fields = data.apply(lambda x: pd.Series(_apply(x)), axis=1)
-            data[new_fields.columns] = new_fields
-        else:
-            data.update(_apply(data))
-
-        return data
+        try:
+            compiled_prompt = self.compile_structured_prompt(row)
+            response = get_structured_llm_response(compiled_prompt, model)
+        except Exception as e:
+            # TODO: need better error logging here include stacktrace
+            response = StructuredLLMResponse(
+                success=False, error=str(e), latency=0)
+        self._update_statistics(response)
+        result = {f"__{self.name}__": response.model_dump()}
+        if response.success:
+            content = response.content
+            for field in fields:
+                # TODO: handle missing fields instead of printing
+                if field not in content:
+                    print(
+                        f"Step {self.name}: Missing field {field} in response {content}")
+                val = content.get(field)
+                result[field] = val or ""
+        return result
