@@ -14,7 +14,9 @@ class PipelineStatistics(BaseModel):
 
 
 class Pipeline:
-    def __init__(self, steps: List[Step], evaluation_fn: Callable[[any], bool] = None):
+    def __init__(self,
+                 steps: List[Step],
+                 evaluation_fn: Callable[[any], bool] = None):
         self.steps = steps
         self.evaluation_fn = evaluation_fn
         self.data = None
@@ -31,9 +33,11 @@ class Pipeline:
                 self.evaluate()
         return data
 
-    # TODO
-    def update_params(self, params):
-        pass
+    def update_params(self, params: Dict):
+        for step in self.steps:
+            global_params = params.get('global', {})
+            step_params = params.get(step.name, {})
+            step.update_params({**global_params, **step_params})
 
     def evaluate(self, evaluation_fn=None):
         evaluation_fn = evaluation_fn or self.evaluation_fn
