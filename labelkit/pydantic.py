@@ -4,6 +4,24 @@ import inspect
 
 
 def describe_pydantic_model(model_class: BaseModel, indent: str = ""):
+    """
+    Generates a string description of a Pydantic model including its fields, types, and descriptions.
+
+    This function recursively describes the structure of Pydantic models, handling nested models,
+    lists of models, lists of primitive types, and primitive types themselves. It formats the description
+    with indentation to reflect the structure of nested models.
+
+    Args:
+        model_class (BaseModel): The Pydantic model class to describe.
+        indent (str, optional): The indentation string to use for nested structures. Defaults to "".
+
+    Returns:
+        str: A formatted string describing the structure of the Pydantic model.
+
+    Note:
+        Currently, this function only handles lists of BaseModels, lists of primitives, BaseModels, and primitives.
+        More complex types like Optional, Union, etc., are not yet supported.
+    """
     model_description = ""
     fields = model_class.model_fields
     for field_name, field_info in fields.items():

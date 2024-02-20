@@ -14,6 +14,23 @@ class PipelineStatistics(BaseModel):
 
 
 class Pipeline:
+    """
+    A class representing a pipeline of steps to process data.
+
+    Attributes:
+        steps (List[Step]): A list of steps (processing units) in the pipeline.
+        evaluation_fn (Callable[[any], bool], optional): An optional function to evaluate the processed data.
+        data (Union[pd.DataFrame, Dict], optional): The data processed by the pipeline. Initially None.
+        score (float, optional): The evaluation score of the processed data. Initially None.
+        statistics (PipelineStatistics): Statistics of the pipeline's execution.
+
+    Methods:
+        apply(data): Applies the pipeline steps to the input data.
+        update_params(params): Updates the parameters of the pipeline steps.
+        evaluate(evaluation_fn=None): Evaluates the processed data using an evaluation function.
+        _aggregate_statistics(data): Aggregates statistics from the pipeline steps.
+    """
+
     def __init__(self,
                  steps: List[Step],
                  evaluation_fn: Callable[[any], bool] = None):

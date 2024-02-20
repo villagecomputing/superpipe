@@ -15,6 +15,30 @@ class StructuredLLMResponse(BaseModel):
 
 
 def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMResponse:
+    """
+    Sends a prompt to a specified language model and returns a structured response.
+
+    The desired output schema should be described within the prompt.
+
+    This function sends a prompt to a language model, specified by the `model` parameter,
+    and structures the response into a `StructuredLLMResponse` object. It handles errors
+    gracefully, populating the error attribute of the response object if necessary.
+
+    Also measures the latency of the request and populates the latency attribute of the response object.
+
+    Args:
+        prompt (str): The input prompt to send to the language model.
+        model: The language model to use. Defaults to `gpt35`.
+
+    Returns:
+        StructuredLLMResponse: An object containing structured information about the
+        response from the language model, including input and output tokens, success
+        status, error message (if any), latency, and the content of the response.
+
+    Raises:
+        ValueError: If the specified model is not supported.
+    """
+
     response = StructuredLLMResponse()
     res = None
     client = get_client(model)
