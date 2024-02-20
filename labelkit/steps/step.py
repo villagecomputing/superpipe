@@ -5,13 +5,11 @@ import pandas as pd
 class Step():
     def __init__(self, name: str = None):
         self.name = name or self.__class__.__name__
-        self.params = {}
 
     def update_params(self, params: Dict):
-        if self.params is not None:
-            self.params.update(params)
-        else:
-            raise ValueError("No params to update")
+        for k, v in params.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
 
     def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
         raise NotImplementedError

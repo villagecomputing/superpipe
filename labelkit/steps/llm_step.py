@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from labelkit.steps import Step
 from labelkit.llm import get_structured_llm_response, StructuredLLMResponse
 from labelkit.pydantic import describe_pydantic_model
-from labelkit.util import validate_dict
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -25,24 +24,20 @@ Return your response in the format given below as a Pydantic model schema:
 """
 
 
-class LLMStepParams(TypedDict):
-    model: str
-    prompt: Callable[[Union[Dict, pd.Series]], str]
-
-
 class LLMStep(Step, Generic[T]):
     def __init__(
             self,
-            params: LLMStepParams,
-            out_model: T,
+            model: str,
+            prompt: Callable[[Union[Dict, pd.Series]], str],
+            out_schema: T,
             name: str = None):
         super().__init__(name)
-        validate_dict(params, LLMStepParams)
-        self.params = params
-        self.out_model = out_model
+        self.model = model
+        self.prompt = prompt
+        self.out_schema = out_schema
         self.statistics = LLMStepStatistics()
 
-    def update_params(self, params):
+    def update_params(self, params: Dict):
         super().update_params(params)
         self.statistics = LLMStepStatistics()
 
@@ -56,14 +51,14 @@ class LLMStep(Step, Generic[T]):
             self.statistics.num_failure += 1
 
     def compile_structured_prompt(self, input: dict):
-        prompt = self.params['prompt']
+        prompt = self.prompt
         prompt_main = prompt(input)
-        output_schema = describe_pydantic_model(self.out_model)
+        output_schema = describe_pydantic_model(self.out_schema)
         return BASE_PROMPT.format(prompt_main=prompt_main, output_schema=output_schema)
 
     def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
-        model = self.params['model']
-        fields = self.out_model.model_fields.keys()
+        model = self.model
+        fields = self.out_schema.model_fields.keys()
         try:
             compiled_prompt = self.compile_structured_prompt(row)
             response = get_structured_llm_response(compiled_prompt, model)
