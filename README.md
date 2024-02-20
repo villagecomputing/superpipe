@@ -23,7 +23,7 @@ LabelKit is an extremely lightweight framework that helps you build these pipeli
 - Keep track of token usage, cost and latency
 - Evaluate accuracy against ground truth
 - Evaluate the correctness of each step in the pipeline
-- Easily parametrize each step (eg. model choice) so you can tune the paramters to optimize performance
+- Easily parametrize each step (eg. model choice) so you can tune the parameters to optimize performance
 
 ## Get Started
 
