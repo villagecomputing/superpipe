@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labelkit"
-version = "0.0.6"
+version = "0.1.0"
 description = "build unstructured to structured data transformation pipelines"
 authors = ["Aman Dhesi <aman@stelolabs.com>"]
 license = "MIT"
