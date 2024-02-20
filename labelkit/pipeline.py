@@ -59,7 +59,7 @@ class Pipeline:
             success = True
         for step in self.steps:
             if isinstance(step, LLMStep):
-                model = step.params['model']
+                model = step.model
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens
                 self.statistics.total_latency += step.statistics.total_latency

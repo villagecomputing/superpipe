@@ -1,21 +1,24 @@
-from typing import Union, Dict, TypeVar, Generic
-from pydantic import BaseModel
+from typing import Union, Dict
 import pandas as pd
 
-T = TypeVar('T', bound=BaseModel)
 
-
-class Step(Generic[T]):
-    def __init__(self,
-                 out_model: T,
-                 name: str = None,
-                 **params):
+class Step():
+    def __init__(self, name: str = None):
         self.name = name or self.__class__.__name__
-        self.out_model = out_model
-        self.params = params
 
-    def update_params(self, params):
-        self.params.update(params)
+    def update_params(self, params: Dict):
+        for k, v in params.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+
+    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+        raise NotImplementedError
 
     def apply(self, data: Union[pd.DataFrame, Dict]):
-        raise NotImplementedError
+        if isinstance(data, pd.DataFrame):
+            new_fields = data.apply(
+                lambda x: pd.Series(self._apply(x)), axis=1)
+            data[new_fields.columns] = new_fields
+        else:
+            data.update(self._apply(data))
+        return data
