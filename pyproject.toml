@@ -22,6 +22,7 @@ pydantic = "^2.6.1"
 [tool.poetry.group.dev.dependencies]
 termcolor = "^2.3.0"
 ipykernel = "^6.29.2"
+tqdm = "^4.66.2"
 
 [build-system]
 requires = ["poetry-core"]

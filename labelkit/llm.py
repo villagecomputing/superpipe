@@ -14,6 +14,39 @@ class StructuredLLMResponse(BaseModel):
     content: dict = {}
 
 
+class LLMResponse(BaseModel):
+    input_tokens: int = 0
+    output_tokens: int = 0
+    success: bool = False
+    error: str = None
+    latency: float = 0.0
+    content: str
+
+
+def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
+    response = LLMResponse()
+    res = None
+    client = get_client(model)
+    if client is None:
+        raise ValueError("Unsupported model: ", model)
+    try:
+        start_time = time.perf_counter()
+        res = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        end_time = time.perf_counter()
+        response.latency = end_time - start_time
+        response.input_tokens = res.usage.prompt_tokens
+        response.output_tokens = res.usage.completion_tokens
+        response.content = res.choices[0].message.content
+        response.success = True
+    except Exception as e:
+        response.success = False
+        response.error = str(e)
+    return response
+
+
 def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMResponse:
     """
     Sends a prompt to a specified language model and returns a structured response.

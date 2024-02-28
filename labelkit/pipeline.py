@@ -40,9 +40,9 @@ class Pipeline:
         self.score = None
         self.statistics = PipelineStatistics()
 
-    def apply(self, data: Union[pd.DataFrame, Dict]):
+    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
         for step in self.steps:
-            step.apply(data)
+            step.apply(data, verbose)
         self._aggregate_statistics(data)
         if isinstance(data, pd.DataFrame):
             self.data = data
