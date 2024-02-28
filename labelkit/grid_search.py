@@ -26,7 +26,9 @@ class GridSearch:
         """
         self.pipeline = pipeline
         self.params_list = GridSearch._expand_params(params_grid)
-        self.results = None
+        self.results: pd.DataFrame = None
+        self.best_score: float = None
+        self.best_params: Dict = None
 
     def _expand_params(params_grid: Dict) -> List[Dict]:
         """
@@ -48,6 +50,19 @@ class GridSearch:
             params_grid_list.append(params)
         return params_grid_list
 
+    def _update_best(self):
+        if self.results is not None and not self.results.empty:
+            best_row = self.results.loc[self.results['score'].idxmax()]
+            self.best_score = best_row['score']
+            best_params = {key: best_row[key]
+                           for key in self.results.columns if "__" in key}
+            nested_best_params = {step: {} for step in set(
+                [key.split("__")[0] for key in best_params.keys()])}
+            for key, value in best_params.items():
+                step, param = key.split("__", 1)
+                nested_best_params[step][param] = value
+            self.best_params = nested_best_params
+
     def _flatten_params_dict(params_dict: Dict) -> Dict:
         """
         Flattens a dictionary of parameters into a single dictionary with concatenated keys.        
@@ -67,7 +82,7 @@ class GridSearch:
         """
         results = []
         for i, params in enumerate(self.params_list):
-          # TODO: check for duplicate params because of steps overriding global params
+            # TODO: check for duplicate params because of steps overriding global params
             print(f"Iteration {i+1} of {len(self.params_list)}")
             print("Params: ", params)
             self.pipeline.update_params(params)
@@ -91,4 +106,5 @@ class GridSearch:
             print("Result: ", result)
             results.append(result)
         self.results = pd.DataFrame(results)
+        self._update_best()
         return self.results

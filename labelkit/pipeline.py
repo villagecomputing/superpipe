@@ -1,16 +1,27 @@
+import json
 from typing import List, Callable, Union, Dict
 from collections import defaultdict
-from pydantic import BaseModel
+from dataclasses import dataclass, field
 import pandas as pd
 from .steps import Step, LLMStep
 
 
-class PipelineStatistics(BaseModel):
-    input_tokens: dict = defaultdict(int)
-    output_tokens: dict = defaultdict(int)
+@dataclass
+class PipelineStatistics:
+    input_tokens: dict = field(default_factory=lambda: defaultdict(int))
+    output_tokens: dict = field(default_factory=lambda: defaultdict(int))
     num_success: int = 0
     num_failure: int = 0
     total_latency: float = 0.0
+
+    def __str__(self):
+        return json.dumps({
+            "input_tokens": dict(self.input_tokens),
+            "output_tokens": dict(self.output_tokens),
+            "num_success": int(self.num_success),
+            "num_failure": int(self.num_failure),
+            "total_latency": float(self.total_latency)
+        }, indent=4)
 
 
 class Pipeline:
