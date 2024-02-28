@@ -4,7 +4,6 @@ import numpy as np
 from numpy.typing import NDArray
 import faiss
 from . import Step
-from labelkit.util import append_dict_to_df
 
 
 class EmbeddingClassificationStep(Step):
@@ -95,7 +94,7 @@ class EmbeddingClassificationStep(Step):
     def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
         pass
 
-    def apply(self, data: Union[pd.DataFrame, Dict]):
+    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
         """
         Applies the classification step to input data.
 
@@ -111,17 +110,18 @@ class EmbeddingClassificationStep(Step):
         embed = self.embed
         k = self.k
         search_prompt = self.search_prompt
-
+        if verbose:
+            print(f"Running step {self.name}...")
         if isinstance(data, pd.DataFrame):
             texts = list(data.apply(search_prompt, axis=1))
         else:
             texts = [search_prompt(data)]
         embeddings = embed(texts)
         D, I = self.index.search(embeddings, k)
-        categories = [{f"category{i+1}": self.categories[x[i]]
-                       for i in range(k)} for x in I.tolist()]
+        categories = pd.DataFrame([{f"category{i+1}": self.categories[x[i]]
+                                    for i in range(k)} for x in I.tolist()])
         if isinstance(data, pd.DataFrame):
-            append_dict_to_df(data, categories)
+            data[categories.columns] = categories
         else:
             data.update(categories[0])
         return data

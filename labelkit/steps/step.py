@@ -1,5 +1,6 @@
 from typing import Union, Dict
 import pandas as pd
+from labelkit.config import is_dev
 
 
 class Step():
@@ -55,7 +56,7 @@ class Step():
         """
         raise NotImplementedError
 
-    def apply(self, data: Union[pd.DataFrame, Dict]):
+    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
         """
         Applies the step's transformation to a DataFrame or dictionary.
 
@@ -71,9 +72,16 @@ class Step():
         Returns:
             Union[pd.DataFrame, Dict]: The transformed data.
         """
+        if verbose:
+            print(f"Running step {self.name}...")
         if isinstance(data, pd.DataFrame):
-            new_fields = data.apply(
-                lambda x: pd.Series(self._apply(x)), axis=1)
+            if verbose and is_dev:
+                from tqdm import tqdm
+                new_fields = pd.DataFrame(
+                    [self._apply(row) for _, row in tqdm(data.iterrows(), total=len(data))])
+            else:
+                new_fields = pd.DataFrame(
+                    [self._apply(row) for _, row in data.iterrows()])
             data[new_fields.columns] = new_fields
         else:
             data.update(self._apply(data))

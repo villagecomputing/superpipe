@@ -2,6 +2,7 @@ import itertools
 import json
 import os
 import pandas as pd
+from typing import Dict, List
 from .pipeline import Pipeline
 
 
@@ -15,7 +16,7 @@ class GridSearch:
         results (pd.DataFrame or None): A DataFrame containing the results of the grid search once applied. Initially set to None.
     """
 
-    def __init__(self, pipeline: Pipeline, params_grid: dict):
+    def __init__(self, pipeline: Pipeline, params_grid: Dict):
         """
         Initializes the GridSearch object with a pipeline and a parameter grid.
 
@@ -25,17 +26,13 @@ class GridSearch:
         """
         self.pipeline = pipeline
         self.params_list = GridSearch._expand_params(params_grid)
-        self.results = None
+        self.results: pd.DataFrame = None
+        self.best_score: float = None
+        self.best_params: Dict = None
 
-    def _expand_params(params_grid):
+    def _expand_params(params_grid: Dict) -> List[Dict]:
         """
         Expands a grid of parameters into a list of all possible combinations.
-
-        Args:
-            params_grid (dict): The parameter grid to expand.
-
-        Returns:
-            list: A list of dictionaries, each representing a unique combination of parameters.
         """
         values_list = [v for params in params_grid.values()
                        for v in params.values()]
@@ -53,19 +50,26 @@ class GridSearch:
             params_grid_list.append(params)
         return params_grid_list
 
-    def _flatten_params_dict(params_dict):
+    def _update_best(self):
+        if self.results is not None and not self.results.empty:
+            best_row = self.results.loc[self.results['score'].idxmax()]
+            self.best_score = best_row['score']
+            best_params = {key: best_row[key]
+                           for key in self.results.columns if "__" in key}
+            nested_best_params = {step: {} for step in set(
+                [key.split("__")[0] for key in best_params.keys()])}
+            for key, value in best_params.items():
+                step, param = key.split("__", 1)
+                nested_best_params[step][param] = value
+            self.best_params = nested_best_params
+
+    def _flatten_params_dict(params_dict: Dict) -> Dict:
         """
-        Flattens a dictionary of parameters into a single dictionary with concatenated keys.
-
-        Args:
-            params_dict (dict): The dictionary of parameters to flatten.
-
-        Returns:
-            dict: A flattened dictionary with keys in the format "step__param".
+        Flattens a dictionary of parameters into a single dictionary with concatenated keys.        
         """
         return {f"{step}__{param}": value for step, params in params_dict.items() for param, value in params.items()}
 
-    def apply(self, df: pd.DataFrame, output_dir=None):
+    def apply(self, df: pd.DataFrame, output_dir=None, verbose=False):
         """
         Applies the grid search on a given DataFrame and optionally saves the results to CSV files.
 
@@ -78,10 +82,11 @@ class GridSearch:
         """
         results = []
         for i, params in enumerate(self.params_list):
+            # TODO: check for duplicate params because of steps overriding global params
             print(f"Iteration {i+1} of {len(self.params_list)}")
             print("Params: ", params)
             self.pipeline.update_params(params)
-            df_result = self.pipeline.apply(df.copy())
+            df_result = self.pipeline.apply(df.copy(), verbose)
             index = hash(json.dumps(params, sort_keys=True))
             if output_dir is not None:
                 full_path = os.path.join(os.getcwd(), output_dir)
@@ -101,4 +106,5 @@ class GridSearch:
             print("Result: ", result)
             results.append(result)
         self.results = pd.DataFrame(results)
+        self._update_best()
         return self.results
