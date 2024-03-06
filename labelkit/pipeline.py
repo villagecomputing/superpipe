@@ -10,6 +10,8 @@ from .steps import Step, LLMStep
 class PipelineStatistics:
     input_tokens: dict = field(default_factory=lambda: defaultdict(int))
     output_tokens: dict = field(default_factory=lambda: defaultdict(int))
+    input_cost: dict = field(default_factory=lambda: defaultdict(float))
+    output_cost: dict = field(default_factory=lambda: defaultdict(float))
     num_success: int = 0
     num_failure: int = 0
     total_latency: float = 0.0
@@ -18,6 +20,8 @@ class PipelineStatistics:
         return json.dumps({
             "input_tokens": dict(self.input_tokens),
             "output_tokens": dict(self.output_tokens),
+            "input_cost": dict(self.output_cost),
+            "output_cost": dict(self.output_cost),
             "num_success": int(self.num_success),
             "num_failure": int(self.num_failure),
             "total_latency": float(self.total_latency)
@@ -90,7 +94,10 @@ class Pipeline:
                 model = step.model
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens
+                self.statistics.input_cost[model] += step.statistics.input_cost
+                self.statistics.output_cost[model] += step.statistics.output_cost
                 self.statistics.total_latency += step.statistics.total_latency
+
                 if isinstance(data, pd.DataFrame):
                     success = success & data.apply(
                         lambda x: x[f"__{step.name}__"]["success"], axis=1)
