@@ -20,8 +20,11 @@ def get_client(model):
     return client_for_model.get(model)
 
 
-def set_client_for_model(model, api_key, base_url):
+def set_client_for_model(model, api_key, base_url, pricing=None):
     client_for_model[model] = OpenAI(api_key=api_key, base_url=base_url)
+    if pricing:
+        input_cost_per_1000_tokens[model] = pricing[model]['input_cost_per_1000']
+        output_cost_per_1000_tokens[model] = pricing[model]['output_cost_per_1000']
 
 input_cost_per_1000_tokens = {}
 output_cost_per_1000_tokens = {}
