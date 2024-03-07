@@ -27,7 +27,7 @@ SuperPipe is an extremely lightweight framework that helps you build these pipel
 
 ## Get Started
 
-Installing SuperPipe is a breeze. Simply run `pip install superpipe` in your terminal.
+Installing SuperPipe is a breeze. Simply run `pip install superpipe-py` in your terminal.
 
 ## License
 

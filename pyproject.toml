@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "superpipe-py"
-version = "0.1.2"
+version = "0.1.3"
 description = "build unstructured to structured data transformation pipelines"
 authors = ["Aman Dhesi <aman@stelolabs.com>"]
 license = "MIT"
