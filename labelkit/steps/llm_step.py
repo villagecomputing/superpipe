@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from labelkit.steps import Step
 from labelkit.llm import get_structured_llm_response, StructuredLLMResponse
 from labelkit.pydantic import describe_pydantic_model
-import requests
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -75,7 +74,6 @@ class LLMStep(Step, Generic[T]):
         super().update_params(params)
         self.statistics = LLMStepStatistics()
 
-
     def _update_statistics(self, response: StructuredLLMResponse):
         """
         Updates the statistics based on the response from the LLM.
@@ -94,7 +92,6 @@ class LLMStep(Step, Generic[T]):
         # Compute the cost
         self.statistics.input_cost += response.input_cost
         self.statistics.output_cost += response.output_cost
-
 
     def compile_structured_prompt(self, input: dict):
         """

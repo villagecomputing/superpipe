@@ -1,31 +1,38 @@
-import json
-from typing import List, Callable, Union, Dict
+from typing import List, Callable, Union, Dict, Optional
 from collections import defaultdict
 from dataclasses import dataclass, field
 import pandas as pd
 from .steps import Step, LLMStep
+from prettytable import PrettyTable
 
 
 @dataclass
 class PipelineStatistics:
+    score: Optional[float] = None
     input_tokens: dict = field(default_factory=lambda: defaultdict(int))
     output_tokens: dict = field(default_factory=lambda: defaultdict(int))
-    input_cost: dict = field(default_factory=lambda: defaultdict(float))
-    output_cost: dict = field(default_factory=lambda: defaultdict(float))
+    input_cost: float = 0.0
+    output_cost: float = 0.0
     num_success: int = 0
     num_failure: int = 0
     total_latency: float = 0.0
 
     def __str__(self):
-        return json.dumps({
-            "input_tokens": dict(self.input_tokens),
-            "output_tokens": dict(self.output_tokens),
-            "input_cost": dict(self.output_cost),
-            "output_cost": dict(self.output_cost),
-            "num_success": int(self.num_success),
-            "num_failure": int(self.num_failure),
-            "total_latency": float(self.total_latency)
-        }, indent=4)
+        table = PrettyTable()
+        table.header = False
+        if self.score is not None:
+            table.add_row(["score", str(self.score)], divider=True)
+        table.add_row(["input_tokens", str(
+            dict(self.input_tokens))], divider=True)
+        table.add_row(["output_tokens", str(
+            dict(self.output_tokens))], divider=True)
+        table.add_row(["input_cost", f"${self.input_cost}"], divider=True)
+        table.add_row(
+            ["output_cost", f"${self.output_cost}"], divider=True)
+        table.add_row(["num_success", str(self.num_success)], divider=True)
+        table.add_row(["num_failure", str(self.num_failure)], divider=True)
+        table.add_row(["total_latency", str(self.total_latency)])
+        return table.get_string()
 
 
 class Pipeline:
@@ -58,11 +65,11 @@ class Pipeline:
     def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
         for step in self.steps:
             step.apply(data, verbose)
-        self._aggregate_statistics(data)
         if isinstance(data, pd.DataFrame):
             self.data = data
             if self.evaluation_fn is not None:
                 self.evaluate()
+        self._aggregate_statistics(data)
         return data
 
     def update_params(self, params: Dict):
@@ -85,6 +92,8 @@ class Pipeline:
 
     def _aggregate_statistics(self, data: Union[pd.DataFrame, Dict]):
         self.statistics = PipelineStatistics()
+        if self.score is not None:
+            self.statistics.score = self.score
         if isinstance(data, pd.DataFrame):
             success = data.apply(lambda x: True, axis=1)
         else:
@@ -94,8 +103,8 @@ class Pipeline:
                 model = step.model
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens
-                self.statistics.input_cost[model] += step.statistics.input_cost
-                self.statistics.output_cost[model] += step.statistics.output_cost
+                self.statistics.input_cost += step.statistics.input_cost
+                self.statistics.output_cost += step.statistics.output_cost
                 self.statistics.total_latency += step.statistics.total_latency
 
                 if isinstance(data, pd.DataFrame):
