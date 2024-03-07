@@ -1,5 +1,5 @@
 from openai import OpenAI
-from labelkit.models import *
+from superpipe.models import *
 
 # TODO: add support for non-openai providers
 
@@ -20,5 +20,6 @@ def get_client(model):
     return client_for_model.get(model)
 
 
-def set_client_for_model(model, api_key, base_url):
+def set_client_for_model(model, api_key, base_url, pricing={}):
     client_for_model[model] = OpenAI(api_key=api_key, base_url=base_url)
+    update_pricing(pricing)

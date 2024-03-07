@@ -8,7 +8,7 @@ from .step import Step
 
 class SERPEnrichmentStep(Step):
     """
-    A step in a LabelKit pipeline to enrich data with Search Engine Results Page (SERP) data.
+    A step in a SuperPipe pipeline to enrich data with Search Engine Results Page (SERP) data.
 
     This step uses a provided prompt function to generate search queries from input data, fetches the search
     results, and optionally applies a post-processing function to the results.

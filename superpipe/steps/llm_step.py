@@ -14,6 +14,8 @@ class LLMStepStatistics(BaseModel):
     num_success: int = 0
     num_failure: int = 0
     total_latency: float = 0.0
+    input_cost: float = 0.0
+    output_cost: float = 0.0
 
 
 BASE_PROMPT = """
@@ -86,6 +88,10 @@ class LLMStep(Step, Generic[T]):
             self.statistics.num_success += 1
         else:
             self.statistics.num_failure += 1
+
+        # Compute the cost
+        self.statistics.input_cost += response.input_cost
+        self.statistics.output_cost += response.output_cost
 
     def compile_structured_prompt(self, input: dict):
         """
