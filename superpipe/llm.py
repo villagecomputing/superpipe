@@ -1,13 +1,15 @@
 import time
 import json
 from pydantic import BaseModel
-from labelkit.models import gpt35
-from labelkit.openai import get_client
+from superpipe.models import gpt35, get_cost
+from superpipe.openai import get_client
 
 
 class StructuredLLMResponse(BaseModel):
     input_tokens: int = 0
     output_tokens: int = 0
+    input_cost: float = 0.0
+    output_cost: float = 0.0
     success: bool = False
     error: str = None
     latency: float = 0.0
@@ -17,6 +19,8 @@ class StructuredLLMResponse(BaseModel):
 class LLMResponse(BaseModel):
     input_tokens: int = 0
     output_tokens: int = 0
+    input_cost: float = 0.0
+    output_cost: float = 0.0
     success: bool = False
     error: str = None
     latency: float = 0.0
@@ -39,6 +43,8 @@ def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
         response.latency = end_time - start_time
         response.input_tokens = res.usage.prompt_tokens
         response.output_tokens = res.usage.completion_tokens
+        response.input_cost, response.output_cost = get_cost(
+            response.input_tokens, response.output_tokens, model)
         response.content = res.choices[0].message.content
         response.success = True
     except Exception as e:
@@ -75,6 +81,7 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
     response = StructuredLLMResponse()
     res = None
     client = get_client(model)
+
     if client is None:
         raise ValueError("Unsupported model: ", model)
     try:
@@ -92,6 +99,8 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
         response.latency = end_time - start_time
         response.input_tokens = res.usage.prompt_tokens
         response.output_tokens = res.usage.completion_tokens
+        response.input_cost, response.output_cost = get_cost(
+            response.input_tokens, response.output_tokens, model)
         response.content = json.loads(res.choices[0].message.content)
         response.success = True
     except Exception as e:

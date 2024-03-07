@@ -3,7 +3,7 @@ import json
 import os
 import pandas as pd
 from typing import Dict, List
-from .pipeline import Pipeline
+from superpipe.pipeline import Pipeline
 
 
 class GridSearch:
@@ -98,6 +98,8 @@ class GridSearch:
                 'score': self.pipeline.score,
                 'input_tokens': self.pipeline.statistics.input_tokens,
                 'output_tokens': self.pipeline.statistics.output_tokens,
+                'input_cost': self.pipeline.statistics.input_cost,
+                'output_cost': self.pipeline.statistics.output_cost,
                 'num_success': self.pipeline.statistics.num_success,
                 'num_failure': self.pipeline.statistics.num_failure,
                 'total_latency': self.pipeline.statistics.total_latency,
