@@ -1,9 +1,9 @@
 from typing import Callable, Union, Dict, TypeVar, Generic
 import pandas as pd
 from pydantic import BaseModel
-from labelkit.steps import Step
-from labelkit.llm import get_structured_llm_response, StructuredLLMResponse
-from labelkit.pydantic import describe_pydantic_model
+from superpipe.steps.step import Step
+from superpipe.llm import get_structured_llm_response, StructuredLLMResponse
+from superpipe.pydantic import describe_pydantic_model
 
 T = TypeVar('T', bound=BaseModel)
 

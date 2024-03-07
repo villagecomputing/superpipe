@@ -3,7 +3,7 @@ import requests
 import json
 import pandas as pd
 from typing import Callable, Union, Optional, Dict
-from .step import Step
+from superpipe.steps.step import Step
 
 
 class SERPEnrichmentStep(Step):

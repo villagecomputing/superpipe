@@ -1,7 +1,7 @@
 from typing import Union, Dict, Callable, TypeVar, Generic
 from pydantic import BaseModel
 import pandas as pd
-from .step import Step
+from superpipe.steps.step import Step
 
 T = TypeVar('T', bound=BaseModel)
 

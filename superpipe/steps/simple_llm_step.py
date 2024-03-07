@@ -1,8 +1,8 @@
 from typing import Callable, Union, Dict, TypeVar, Generic
 import pandas as pd
 from pydantic import BaseModel
-from labelkit.steps import Step
-from labelkit.llm import get_llm_response, LLMResponse
+from superpipe.steps.step import Step
+from superpipe.llm import get_llm_response, LLMResponse
 
 
 class LLMStepStatistics(BaseModel):
