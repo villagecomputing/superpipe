@@ -1,5 +1,5 @@
 from openai import OpenAI
-from labelkit.models import *
+from superpipe.models import *
 
 # TODO: add support for non-openai providers
 

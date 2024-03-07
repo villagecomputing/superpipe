@@ -1,13 +1,13 @@
-# LabelKit - build and evaluate data labeling pipelines
+# SuperPipe - build and evaluate LLM pipelines
 
 _A lightweight framework for building and evaluating data transformation and data extraction pipelines using LLMs. Designed for simplicity, rapid prototyping, evaluation and optimization._
 
 ---
 
-[Star us on Github!](https://github.com/villagecomputing/labelkit)
+[Star us on Github!](https://github.com/villagecomputing/superpipe)
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/villagecompute?style=social)](https://twitter.com/villagecompute)
-[![Downloads](https://img.shields.io/pypi/dm/labelkit.svg)](https://pypi.python.org/pypi/labelkit)
+[![Downloads](https://img.shields.io/pypi/dm/superpipe-py.svg)](https://pypi.python.org/pypi/superpipe-py)
 
 LLMs can make your treasure trove of unstructured data useful if only you could transform it into structured, or extract key fields from it. Today, building LLM-powered pipelines is difficult because LLMs are unpredictable. Unlike traditional software, you can't simply write unit and integration tests that confirm the correctness of your code.
 
@@ -17,7 +17,7 @@ With LLMs you need a different approach: you need to evaluate your code on a dat
 - Cost
 - Latency
 
-LabelKit is an extremely lightweight framework that helps you build these pipelines such that you can:
+SuperPipe is an extremely lightweight framework that helps you build these pipelines such that you can:
 
 - Easily run them on a dataset (not just a single data point)
 - Keep track of token usage, cost and latency
@@ -27,7 +27,7 @@ LabelKit is an extremely lightweight framework that helps you build these pipeli
 
 ## Get Started
 
-Installing LabelKit is a breeze. Simply run `pip install labelkit` in your terminal.
+Installing SuperPipe is a breeze. Simply run `pip install superpipe` in your terminal.
 
 ## License
 
@@ -44,6 +44,6 @@ This project is licensed under the terms of the MIT License.
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-<a href="https://github.com/villagecomputing/labelkit/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=villagecomputing/labelkit" />
+<a href="https://github.com/villagecomputing/superpipe/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=villagecomputing/superpipe" />
 </a>

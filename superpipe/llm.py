@@ -1,8 +1,8 @@
 import time
 import json
 from pydantic import BaseModel
-from labelkit.models import gpt35, get_cost
-from labelkit.openai import get_client
+from superpipe.models import gpt35, get_cost
+from superpipe.openai import get_client
 
 
 class StructuredLLMResponse(BaseModel):

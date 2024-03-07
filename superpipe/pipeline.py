@@ -2,7 +2,7 @@ from typing import List, Callable, Union, Dict, Optional
 from collections import defaultdict
 from dataclasses import dataclass, field
 import pandas as pd
-from .steps import Step, LLMStep
+from superpipe.steps import Step, LLMStep
 from prettytable import PrettyTable
 
 

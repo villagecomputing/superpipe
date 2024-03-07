@@ -3,7 +3,7 @@ import json
 import os
 import pandas as pd
 from typing import Dict, List
-from .pipeline import Pipeline
+from superpipe.pipeline import Pipeline
 
 
 class GridSearch:
