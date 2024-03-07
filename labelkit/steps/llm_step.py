@@ -47,7 +47,8 @@ class LLMStep(Step, Generic[T]):
             model: str,
             prompt: Callable[[Union[Dict, pd.Series]], str],
             out_schema: T,
-            name: str = None):
+            name: str = None,
+            json_adapter_model: str = None):
         """
         Initializes a new instance of the LLMStep class.
 
@@ -62,6 +63,8 @@ class LLMStep(Step, Generic[T]):
         self.prompt = prompt
         self.out_schema = out_schema
         self.statistics = LLMStepStatistics()
+        self.json_adapter_model = json_adapter_model
+        print(self.json_adapter_model)
 
     def update_params(self, params: Dict):
         """
@@ -127,7 +130,7 @@ class LLMStep(Step, Generic[T]):
         fields = self.out_schema.model_fields.keys()
         try:
             compiled_prompt = self.compile_structured_prompt(row)
-            response = get_structured_llm_response(compiled_prompt, model)
+            response = get_structured_llm_response(compiled_prompt, model, self.json_adapter_model)
         except Exception as e:
             # TODO: need better error logging here include stacktrace
             response = StructuredLLMResponse(

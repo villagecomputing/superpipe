@@ -20,7 +20,7 @@ class PipelineStatistics:
         return json.dumps({
             "input_tokens": dict(self.input_tokens),
             "output_tokens": dict(self.output_tokens),
-            "input_cost": dict(self.output_cost),
+            "input_cost": dict(self.input_cost),
             "output_cost": dict(self.output_cost),
             "num_success": int(self.num_success),
             "num_failure": int(self.num_failure),

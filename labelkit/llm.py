@@ -46,6 +46,40 @@ def _compute_cost(model, input_token_count, output_token_count):
     return total_input_cost, total_output_cost
 
 
+
+def _json_adapter(input, model):
+    response = StructuredLLMResponse()
+    res = None
+    client = get_client(model)
+    if client is None:
+        raise ValueError("Unsupported model: ", model)
+    try:
+        start_time = time.perf_counter()
+        res = client.chat.completions.create(
+            response_format={"type": "json_object"},
+            model=model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "parse this message and convert it to the json from it",
+                },
+                {"role": "user", "content": input.content}
+            ]
+        )
+        end_time = time.perf_counter()
+        response.latency = input.latency+ (end_time - start_time)
+        response.input_tokens = input.input_tokens + res.usage.prompt_tokens
+        response.output_tokens = input.output_tokens + res.usage.completion_tokens
+        json_input_cost, json_output_cost = _compute_cost(model, response.input_tokens, response.output_tokens)
+        response.input_cost, response.output_cost = input.input_cost + json_input_cost, input.output_cost + json_output_cost
+        response.content = json.loads(res.choices[0].message.content)
+        response.success = True
+    except Exception as e:
+        response.success = False
+        response.error = str(e)
+    return response
+
+
 def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
     response = LLMResponse()
     res = None
@@ -71,7 +105,7 @@ def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
     return response
 
 
-def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMResponse:
+def get_structured_llm_response(prompt: str, model=gpt35, json_adapter_model=None) -> StructuredLLMResponse:
     """
     Sends a prompt to a specified language model and returns a structured response.
 
@@ -99,14 +133,13 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
     response = StructuredLLMResponse()
     res = None
     client = get_client(model)
-    
     if client is None:
         raise ValueError("Unsupported model: ", model)
     try:
         start_time = time.perf_counter()
         res = client.chat.completions.create(
             model=model,
-            response_format={"type": "json_object"},
+            # response_format={"type": "json_object"},
             messages=[
                 {"role": "system",
                  "content": "You are a helpful assistant designed to output JSON."},
@@ -118,8 +151,14 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
         response.input_tokens = res.usage.prompt_tokens
         response.output_tokens = res.usage.completion_tokens
         response.input_cost, response.output_cost = _compute_cost(model, response.input_tokens, response.output_tokens)
-        response.content = json.loads(res.choices[0].message.content)
-        response.success = True
+        if json_adapter_model is None:
+            response.content = json.loads(res.choices[0].message.content)
+            response.success = True
+        else:
+            response.content = res.choices[0].message.content
+            print(response)
+            response = _json_adapter(response, json_adapter_model)
+
     except Exception as e:
         response.success = False
         if res is None:
@@ -127,3 +166,5 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
         else:
             response.error = f"Failed to parse json: ${res.choices[0].message.content}"
     return response
+
+
