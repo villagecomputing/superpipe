@@ -1,6 +1,6 @@
 from typing import Union, Dict
 import pandas as pd
-from labelkit.config import is_dev
+from superpipe.config import is_dev
 
 
 class Step():
