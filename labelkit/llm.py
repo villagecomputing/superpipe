@@ -1,9 +1,8 @@
 import time
 import json
 from pydantic import BaseModel
-from labelkit.models import gpt35
+from labelkit.models import gpt35, get_cost
 from labelkit.openai import get_client
-from labelkit.openai import get_model_pricing
 
 
 class StructuredLLMResponse(BaseModel):
@@ -28,24 +27,6 @@ class LLMResponse(BaseModel):
     content: str
 
 
-def _compute_cost(model, input_token_count, output_token_count):
-    """
-    Compute the cost for each item based on the number of input and output tokens and the cost per 1000 tokens for each model.
-    """
-    # get the latest pricing data
-    input_prices, output_prices = get_model_pricing()
-
-
-    total_input_cost = 0.0
-    total_output_cost = 0.0
-    # Calculate the cost for the current model and add it to the total cost
-    model_input_cost_per_token = input_prices[model] / 1000
-    model_output_cost_per_token = output_prices[model] / 1000
-    total_input_cost = input_token_count * model_input_cost_per_token
-    total_output_cost = output_token_count * model_output_cost_per_token
-    return total_input_cost, total_output_cost
-
-
 def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
     response = LLMResponse()
     res = None
@@ -62,7 +43,8 @@ def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
         response.latency = end_time - start_time
         response.input_tokens = res.usage.prompt_tokens
         response.output_tokens = res.usage.completion_tokens
-        response.input_cost, response.output_cost = _compute_cost(model, response.input_tokens, response.output_tokens)
+        response.input_cost, response.output_cost = get_cost(
+            response.input_tokens, response.output_tokens, model)
         response.content = res.choices[0].message.content
         response.success = True
     except Exception as e:
@@ -99,7 +81,7 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
     response = StructuredLLMResponse()
     res = None
     client = get_client(model)
-    
+
     if client is None:
         raise ValueError("Unsupported model: ", model)
     try:
@@ -117,7 +99,8 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
         response.latency = end_time - start_time
         response.input_tokens = res.usage.prompt_tokens
         response.output_tokens = res.usage.completion_tokens
-        response.input_cost, response.output_cost = _compute_cost(model, response.input_tokens, response.output_tokens)
+        response.input_cost, response.output_cost = get_cost(
+            response.input_tokens, response.output_tokens, model)
         response.content = json.loads(res.choices[0].message.content)
         response.success = True
     except Exception as e:
