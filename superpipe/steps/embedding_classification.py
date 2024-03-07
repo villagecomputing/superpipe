@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
 import faiss
-from . import Step
+from superpipe.steps.step import Step
 
 
 class EmbeddingClassificationStep(Step):
