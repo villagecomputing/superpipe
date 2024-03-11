@@ -24,6 +24,7 @@ requests = "^2.31.0"
 termcolor = "^2.3.0"
 ipykernel = "^6.29.2"
 tqdm = "^4.66.2"
+mkdocs-material = "^9.5.13"
 
 [build-system]
 requires = ["poetry-core"]
