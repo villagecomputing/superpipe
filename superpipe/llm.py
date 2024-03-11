@@ -24,7 +24,7 @@ class LLMResponse(BaseModel):
     success: bool = False
     error: str = None
     latency: float = 0.0
-    content: str
+    content: str = ""
 
 
 def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
