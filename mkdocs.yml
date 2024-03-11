@@ -1,0 +1,24 @@
+site_name: Superpipe
+
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - navigation.sections
+    - navigation.tabs
+
+nav:
+  - Introduction:
+      - Getting Started: intro/getting_started.md
+      - Why Superpipe?: intro/why_superpipe.md
+  - Using Superpipe:
+      - Introduction: using/index.md
+      - Steps:
+          - Step 1: using/steps/index.md
+      - Pipelines: using/pipelines.md
+      - Models: using/models.md
+      - Grid Search: using/grid_search.md
+  - Use Cases:
+      - Use Case 1: use_cases/index.md
+  - Examples:
+      - Example 1: examples/index.md
