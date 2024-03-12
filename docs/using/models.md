@@ -21,7 +21,7 @@ For non OpenAI you need to provide a `baseURL` when using the model. You can do 
 
 `set_client_for_model(model_name, api_key, base_url, pricing)`
 
-The `pricing` dictionary takes a model name as the top level key with two nested-keys , `input_cost_per_1000` and `output_cost_per_1000`.
+The `pricing` dictionary takes a model name as the key and a tuple for the input and output price per million tokens as values.
 
 ```python
 openai.set_client_for_model(
@@ -29,10 +29,7 @@ openai.set_client_for_model(
     api_key="OPEN_ROUTER_API_KEY", 
     base_url="https://openrouter.ai/api/v1", 
     pricing={
-        'google/gemma-7b-it:free': {
-            "input_cost_per_1000": 0, 
-            'output_cost_per_1000': 0
-        }
+        'google/gemma-7b-it:free': [0, 0]
     }
 )
 ```
