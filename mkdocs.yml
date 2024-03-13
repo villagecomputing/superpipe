@@ -6,19 +6,31 @@ theme:
     - navigation.tracking
     - navigation.sections
     - navigation.tabs
+    - navigation.tracking
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - navigation.path
+    - navigation.indexes
+    - navigation.footer
 
 nav:
   - Introduction:
-      - Getting Started: intro/getting_started.md
-      - Why Superpipe?: intro/why_superpipe.md
+      - index.md
+      - getting_started.md
+      - why_superpipe.md
   - Using Superpipe:
-      - Introduction: using/index.md
+      - using/index.md
       - Steps:
-          - Step 1: using/steps/index.md
+          - using/steps/index.md
+          - LLM Step: using/steps/index.md
+          - LLM Structured Step: using/steps/index.md
       - Pipelines: using/pipelines.md
       - Models: using/models.md
       - Grid Search: using/grid_search.md
   - Use Cases:
+      - use_cases/index.md
       - Use Case 1: use_cases/index.md
   - Examples:
+      - examples/index.md
       - Example 1: examples/index.md
