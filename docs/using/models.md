@@ -29,7 +29,7 @@ openai.set_client_for_model(
     api_key="OPEN_ROUTER_API_KEY", 
     base_url="https://openrouter.ai/api/v1", 
     pricing={
-        'google/gemma-7b-it:free': [0, 0]
+        'google/gemma-7b-it:free': (0, 0)
     }
 )
 ```
