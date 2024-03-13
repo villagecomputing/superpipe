@@ -1,17 +1,22 @@
-# Getting Started
+# Superpipe - build, evaluate and optimize LLM pipelines
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+_A lightweight framework for LLM-based data transformation, data extraction and classification pipelines._
 
-## Commands
+<hr>
 
-- `mkdocs new [dir-name]` - Create a new project.
-- `mkdocs serve` - Start the live-reloading docs server.
-- `mkdocs build` - Build the documentation site.
-- `mkdocs -h` - Print help message and exit.
+Superpipe helps you build multi-step LLM pipelines and optimize them to find the right trade-off between **accuracy, cost, and speed**. Use Superpipe to:
 
-## Project layout
+1. Build the first version of your pipeline
+2. Label some ground truth data to evaluate on
+3. Try different techniques and parameters and evaluate them against each other with a hyperparameter search
+4. Pick the technique and parameters that maximize your objective function
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Getting Started
+
+Make sure you have Python 3.10+ installed, then run
+
+```
+pip install superpipe-py
+```
+
+## Basic Usage
