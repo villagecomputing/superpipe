@@ -1,4 +1,4 @@
-# Structured LLM Step
+# Normal LLM Step
 
 The `LLMNormalStep` is used to create generative responses.
 

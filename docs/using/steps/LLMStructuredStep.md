@@ -8,8 +8,8 @@ An `LLMStructuredStep` instance takes a Pydantic model and a prompt generator fu
 `LLMStructuredStep` returns useful statistics about the LLM call for each row.  
 | Stat name       | Description 
 |-------------|----------|
-|input_tokens | Number of input token used.
-|output_tokens | Number of input token used.
+|input_tokens | Number of input tokens used.
+|output_tokens | Number of output tokens used.
 |input_cost| Input cost of running the LLM call.
 |output_cost | Output cost of running the LLM call.
 |num_success | Number of succesful calls.
@@ -43,7 +43,7 @@ business_code_step = steps.LLMStructuredStep(
   prompt=business_code_prompt,
   out_schema=BusinessCode,
   name="business_code")
-  ```
+```
 
 ## Supported models
 `LLMStructuredStep` currently only works with models that support JSON mode. There may be other models not on this list that also work.
