@@ -4,6 +4,7 @@ import os
 import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
+from matplotlib.colors import LinearSegmentedColormap
 
 
 class GridSearch:
@@ -109,4 +110,39 @@ class GridSearch:
             results.append(result)
         self.results = pd.DataFrame(results)
         self._update_best()
-        return self.results
+        def percentile_norm(col, reverse=False):
+            # Normalize the column based on percentiles
+            lower = self.results[col].quantile(0)
+            upper = self.results[col].quantile(1)
+            if reverse:  # Lower values are better
+                norm_col = 1 - (self.results[col] - lower) / (upper - lower)
+            else:  # Higher values are better
+                norm_col = (self.results[col] - lower) / (upper - lower)
+            # Clip the values to keep them between 0 and 1
+            norm_col = norm_col.clip(0, 1)
+            return norm_col
+
+        normalized_results = self.results.copy()
+        for col in ['score']:
+            normalized_results[col] = percentile_norm(col)
+        for col in ['input_cost', 'output_cost', 'total_latency']:
+            normalized_results[col] = percentile_norm(col, reverse=True)
+
+        # Define the colors for the colormap (green, white, red)
+        cmap_colors = [(0, 1, 0), (1, 1, 1), (1, 0, 0)]  # G -> W -> R
+
+        # Create the colormap
+        custom_cmap = LinearSegmentedColormap.from_list("custom_cmap", cmap_colors)
+        
+        # Apply the gradient based on the normalized percentiles
+        # Use the normalized DataFrame for coloring but display the original results
+        styled_results = self.results.style.background_gradient(
+            subset=['score'], cmap=custom_cmap, low=self.results['score'].min(), high=self.results['score'].max(), 
+            vmin=self.results['score'].min(), vmax=self.results['score'].max()
+        ).background_gradient(
+            subset=['input_cost', 'output_cost', 'total_latency'], cmap=custom_cmap, low=0, high=1,
+            vmin=0, vmax=1  # Assuming normalized values are already between 0 and 1
+        )
+
+        return styled_results
+
