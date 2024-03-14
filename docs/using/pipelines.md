@@ -1,5 +1,5 @@
 # Pipelines
-Pipelines are the enginges that make Superpipe run. A pipeline is a series of steps chained together that acts on a dataframe. A pipeline takes an optional evaluation function that can run arbitrary Python code. Evaluation functions need to return booleans. 
+Pipelines are the engines that make Superpipe run. A pipeline is a series of steps chained together that acts on a dataframe. A pipeline takes an optional evaluation function that can run arbitrary Python code. Evaluation functions need to return booleans. 
 
 ## Pipeline statistics
 A pipeline object has associated pipeline statistics.
