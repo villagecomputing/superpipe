@@ -19,7 +19,10 @@ select_category_step = steps.CustomStep(
 ```
 
 ### API call as a custom step
+<<<<<<< HEAD
 In this example we wrap an API call in a custom step. The result will be three new columns to our dataframe as defined by the pydantic model.
+=======
+>>>>>>> def1d5d (custom step)
 ```python
 import json
 from datetime import datetime
