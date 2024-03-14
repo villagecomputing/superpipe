@@ -23,7 +23,7 @@ nav:
   - Introduction:
       - index.md
       - concepts.md
-      - why_superpipe.md
+      - why.md
       - use_cases.md
       - principles.md
   - Using Superpipe:
@@ -45,6 +45,7 @@ nav:
       - studio/index.md
 
 markdown_extensions:
+  - admonition
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.betterem:
