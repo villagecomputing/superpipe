@@ -3,6 +3,7 @@ Pipelines are the enginges that make Superpipe run. A pipeline is a series of st
 
 ## Pipeline statistics
 A pipeline object has associated pipeline statistics.
+
 |Stat | Description
 |----|-------------
 |score | Accuracy score of the pipeline as defined by the evaluation function. 
