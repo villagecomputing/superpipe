@@ -24,10 +24,9 @@ params_grid = {
 search_embeddings = grid_search.GridSearch(categorizer, params_grid)
 search_embeddings.apply(df)
 ```
-<details>
-<summary>
-Output
-</summary>
+
+### Output
+
 
 |   | short_description__model | embedding_search__k | categorize__model  | score  | input_tokens                                                | output_tokens                                                | input_cost | output_cost | num_success | num_failure | total_latency | index                  |
 |---|---------------------------|---------------------|---------------------|-------|-------------------------------------------------------------|--------------------------------------------------------------|------------|-------------|-------------|-------------|---------------|------------------------|
@@ -44,4 +43,4 @@ Output
 |10 | gpt-4-turbo-preview       | 7                   | gpt-3.5-turbo-0125  | 0.9   | {'gpt-4-turbo-preview': 5852, 'gpt-3.5-turbo-0125': 5852} | {'gpt-4-turbo-preview': 1806, 'gpt-3.5-turbo-0125': 1806}    | 0.061864   | 0.054631    | 30          | 0           | 141.250665    | -1609701935912568703   |
 |11 | gpt-4-turbo-preview       | 7                   | gpt-4-turbo-preview | 0.967 | {'gpt-4-turbo-preview': 12528}                             | {'gpt-4-turbo-preview': 2090}                                | 0.125280   | 0.062700    | 30          | 0           | 169.717205    | -7994583890545252174   |
 
-</details>
+

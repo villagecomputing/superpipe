@@ -6,7 +6,9 @@ An `LLMStructuredStep` instance takes a Pydantic model and a prompt generator fu
 
 ## Statistics
 `LLMStructuredStep` returns useful statistics about the LLM call for each row.  
-| Stat name       | Description 
+
+
+| Stat name       | Description |
 |-------------|----------|
 |input_tokens | Number of input tokens used.
 |output_tokens | Number of output tokens used.
@@ -15,7 +17,6 @@ An `LLMStructuredStep` instance takes a Pydantic model and a prompt generator fu
 |num_success | Number of succesful calls.
 |num_failure | Number of unsuccesful calls.
 |total_latency | Latency for the LLM call.
-
 
 ## Example
 In this example, we provide information about a business and three potential codes to choose from and we expect two structured fields in return, `reasoning` and `code`.

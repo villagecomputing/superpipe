@@ -1,13 +1,14 @@
-# Normal LLM Step
+#  LLM Step
 
-The `LLMNormalStep` is used to create generative responses.
+The `LLMStep` is used to create generative responses.
 
-The output of `LLMNormalStep` is added to the dataframe as a column that can be referenced by the step name. 
+The output of `LLMStep` is added to the dataframe as a column that can be referenced by the step name. 
 
 ## Statistics
-`LLMNormalStep` returns useful statistics about the LLM call for each row.  
+`LLMStep` returns useful statistics about the LLM call for each row. 
+
 | Stat name       | Description 
-|-------------|----------|
+|-------------|----------
 |input_tokens | Number of input token used.
 |output_tokens | Number of output tokens used.
 |input_cost| Input cost of running the LLM call.
@@ -15,7 +16,6 @@ The output of `LLMNormalStep` is added to the dataframe as a column that can be 
 |num_success | Number of succesful calls.
 |num_failure | Number of unsuccesful calls.
 |total_latency | Latency for the LLM call.
-
 
 
 ## Example
@@ -26,7 +26,7 @@ joke_prompt = lambda row: f"""
 Tell me a joke about {row['topic']}
 """
 
-JokesStep = steps.SimpleLLMStep(
+JokesStep = steps.LLMStep(
   prompt=joke_prompt,
   model=models.gpt35,
   name="joke"
