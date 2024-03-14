@@ -1,13 +1,15 @@
-# SuperPipe - build and evaluate LLM pipelines
+# SuperPipe - build, evaluate and optimize LLM pipelines
 
-_A lightweight framework for building and evaluating data transformation and data extraction pipelines using LLMs. Designed for simplicity, rapid prototyping, evaluation and optimization._
+_A lightweight framework for building, evaluating and optimizing data transformation and data extraction pipelines using LLMs. Designed for simplicity, rapid prototyping, evaluation and optimization._
 
 ---
 
-[Star us on Github!](https://github.com/villagecomputing/superpipe)
+[Star us on Github!](https://github.com/villagecomputing/superpipe) &nbsp; [Read the docs](https://villagecomputing.github.io/superpipe/)
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/villagecompute?style=social)](https://twitter.com/villagecompute)
 [![Downloads](https://img.shields.io/pypi/dm/superpipe-py.svg)](https://pypi.python.org/pypi/superpipe-py)
+
+🚧 This readme and the docs are under construction 🚧
 
 LLMs can make your treasure trove of unstructured data useful if only you could transform it into structured, or extract key fields from it. Today, building LLM-powered pipelines is difficult because LLMs are unpredictable. Unlike traditional software, you can't simply write unit and integration tests that confirm the correctness of your code.
 
