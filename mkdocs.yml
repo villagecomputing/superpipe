@@ -25,19 +25,19 @@ nav:
       - concepts.md
       - why_superpipe.md
       - use_cases.md
-      - philosophy.md
+      - principles.md
   - Using Superpipe:
       - using/index.md
       - Pipelines: using/pipelines.md
       - Models: using/models.md
       - Grid Search: using/grid_search.md
       - Steps:
-        - using/steps/index.md
-        - using/steps/LLMNormalStep.md
-        - using/steps/LLMStructuredStep.md
-        - using/steps/SERPStep.md
-        - using/steps/EmbeddingClassificationStep.md
-        - using/steps/CustomStep.md
+          - using/steps/index.md
+          - using/steps/LLMNormalStep.md
+          - using/steps/LLMStructuredStep.md
+          - using/steps/SERPStep.md
+          - using/steps/EmbeddingClassificationStep.md
+          - using/steps/CustomStep.md
   - Examples:
       - examples/index.md
       - Example 1: examples/index.md
