@@ -25,6 +25,7 @@ termcolor = "^2.3.0"
 ipykernel = "^6.29.2"
 tqdm = "^4.66.2"
 mkdocs-material = "^9.5.13"
+pymdown-extensions = "^10.7.1"
 
 [build-system]
 requires = ["poetry-core"]

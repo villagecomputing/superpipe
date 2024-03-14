@@ -1,4 +1,9 @@
 site_name: Superpipe
+site_author: Aman Dhesi, Ben Scharfstein
+site_description: LLM pipelines for structured data extraction and classification
+repo_name: superpipe
+repo_url: https://github.com/villagecomputing/superpipe
+site_url: https://villagecomputing.co/superpipe
 
 theme:
   name: material
@@ -17,8 +22,10 @@ theme:
 nav:
   - Introduction:
       - index.md
-      - getting_started.md
+      - concepts.md
       - why_superpipe.md
+      - use_cases.md
+      - philosophy.md
   - Using Superpipe:
       - using/index.md
       - Steps:
@@ -28,9 +35,51 @@ nav:
       - Pipelines: using/pipelines.md
       - Models: using/models.md
       - Grid Search: using/grid_search.md
-  - Use Cases:
-      - use_cases/index.md
-      - Use Case 1: use_cases/index.md
   - Examples:
       - examples/index.md
       - Example 1: examples/index.md
+  - Studio:
+      - studio/index.md
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: jxnl
+      repo: instructor
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/mkdocs.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+social:
+  - icon: fontawesome/brands/twitter
+    link: https://twitter.com/villagecompute
+  - icon: fontawesome/brands/github
+    link: https://github.com/villagecomputing
