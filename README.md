@@ -2,14 +2,18 @@
 
 _A lightweight framework for building, evaluating and optimizing data transformation and data extraction pipelines using LLMs. Designed for simplicity, rapid prototyping, evaluation and optimization._
 
+🚧 This readme and the docs are under construction 🚧
+
 ---
 
-[Star us on Github!](https://github.com/villagecomputing/superpipe) &nbsp; [Read the docs](https://villagecomputing.github.io/superpipe/)
+<p align="center">
+  <a href="https://github.com/villagecomputing/superpipe">Star us on Github!</a> &nbsp; <a href="https://villagecomputing.github.io/superpipe/">Read the docs</a>
+  <br><br>
+  <a href="https://twitter.com/villagecompute"><img src="https://img.shields.io/twitter/follow/villagecompute?style=social"></a>
+  <a href="https://pypi.python.org/pypi/superpipe-py"><img src="https://img.shields.io/pypi/dm/superpipe-py.svg"></a>
+</p>
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/villagecompute?style=social)](https://twitter.com/villagecompute)
-[![Downloads](https://img.shields.io/pypi/dm/superpipe-py.svg)](https://pypi.python.org/pypi/superpipe-py)
-
-🚧 This readme and the docs are under construction 🚧
+<p align="center"><img src="./comparison.png" style="width: 400px;" /></p>
 
 LLMs can make your treasure trove of unstructured data useful if only you could transform it into structured, or extract key fields from it. Today, building LLM-powered pipelines is difficult because LLMs are unpredictable. Unlike traditional software, you can't simply write unit and integration tests that confirm the correctness of your code.
 
