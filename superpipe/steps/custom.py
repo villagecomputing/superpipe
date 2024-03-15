@@ -15,7 +15,7 @@ class CustomStep(Step, Generic[T]):
     The output of the transformation must conform to a Pydantic model specified by `out_schema`.
 
     Methods:
-        _apply(row: Union[pd.Series, Dict]) -> Dict: Applies the transformation function to a single row of data and ensures the output matches the defined Pydantic model.
+        _run(row: Union[pd.Series, Dict]) -> Dict: Applies the transformation function to a single row of data and ensures the output matches the defined Pydantic model.
     """
 
     def __init__(self,
@@ -36,7 +36,7 @@ class CustomStep(Step, Generic[T]):
         self.transform = transform
         self.out_schema = out_schema
 
-    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
         Applies the transformation function to a single row of data.
 

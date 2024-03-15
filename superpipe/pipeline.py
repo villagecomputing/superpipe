@@ -47,7 +47,7 @@ class Pipeline:
         statistics (PipelineStatistics): Statistics of the pipeline's execution.
 
     Methods:
-        apply(data): Applies the pipeline steps to the input data.
+        run(data): Applies the pipeline steps to the input data.
         update_params(params): Updates the parameters of the pipeline steps.
         evaluate(evaluation_fn=None): Evaluates the processed data using an evaluation function.
         _aggregate_statistics(data): Aggregates statistics from the pipeline steps.
@@ -62,9 +62,9 @@ class Pipeline:
         self.score = None
         self.statistics = PipelineStatistics()
 
-    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
+    def run(self, data: Union[pd.DataFrame, Dict], verbose=True):
         for step in self.steps:
-            step.apply(data, verbose)
+            step.run(data, verbose)
         if isinstance(data, pd.DataFrame):
             self.data = data
             if self.evaluation_fn is not None:

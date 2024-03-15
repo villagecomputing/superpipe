@@ -29,7 +29,7 @@ class EmbeddingClassificationStep(Step):
     Methods:
         __init__: Initializes the step with necessary functions, categories, and other parameters.
         update_params: Updates parameters of the step and rebuilds the index if necessary.
-        apply: Applies the classification step to input data, either a pandas DataFrame or a dictionary.
+        run: Applies the classification step to input data, either a pandas DataFrame or a dictionary.
     """
 
     DEFAULT_K = 5
@@ -91,10 +91,10 @@ class EmbeddingClassificationStep(Step):
         index.add(embeddings)
         return index
 
-    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         pass
 
-    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
+    def run(self, data: Union[pd.DataFrame, Dict], verbose=True):
         """
         Applies the classification step to input data.
 

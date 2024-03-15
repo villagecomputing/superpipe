@@ -108,7 +108,7 @@ class LLMStep(Step, Generic[T]):
         output_schema = describe_pydantic_model(self.out_schema)
         return BASE_PROMPT.format(prompt_main=prompt_main, output_schema=output_schema)
 
-    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
         Applies the LLM step to a single row of data.
 

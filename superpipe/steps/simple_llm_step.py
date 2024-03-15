@@ -70,7 +70,7 @@ class SimpleLLMStep(Step):
         else:
             self.statistics.num_failure += 1
 
-    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
         Applies the LLM step to a single row of data.
 

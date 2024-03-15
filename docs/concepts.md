@@ -16,7 +16,7 @@ joke_step = SimpleLLMStep(
   model=models.gpt35,
   name="joke"
 )
-joke_step.apply(dataframe)
+joke_step.run(dataframe)
 ```
 
 ??? question "Why steps?"

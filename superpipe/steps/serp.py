@@ -21,7 +21,7 @@ class SERPEnrichmentStep(Step):
 
     Methods:
         _get_search_results(q: str) -> str: Fetches search results for a given query string.
-        _apply(row: Union[pd.Series, Dict]) -> Dict: Applies the SERP enrichment step to a single row of data.
+        _run(row: Union[pd.Series, Dict]) -> Dict: Applies the SERP enrichment step to a single row of data.
     """
 
     def __init__(self,
@@ -60,7 +60,7 @@ class SERPEnrichmentStep(Step):
         response = requests.request("POST", url, headers=headers, data=payload)
         return response.text
 
-    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
         Applies the SERP enrichment step to a single row of data.
 

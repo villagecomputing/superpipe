@@ -15,8 +15,8 @@ class Step():
 
     Methods:
         update_params(params): Updates the step's parameters with values from a dictionary.
-        _apply(row): Abstract method for applying the step's transformation to a single row.
-        apply(data): Applies the step's transformation to a DataFrame or dictionary.
+        _run(row): Abstract method for applying the step's transformation to a single row.
+        run(data): Applies the step's transformation to a DataFrame or dictionary.
     """
 
     def __init__(self, name: str = None):
@@ -39,7 +39,7 @@ class Step():
             if hasattr(self, k):
                 setattr(self, k, v)
 
-    def _apply(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
         Abstract method for applying the step's transformation to a single row.
 
@@ -56,7 +56,7 @@ class Step():
         """
         raise NotImplementedError
 
-    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
+    def run(self, data: Union[pd.DataFrame, Dict], verbose=True):
         """
         Applies the step's transformation to a DataFrame or dictionary.
 
@@ -78,11 +78,11 @@ class Step():
             if verbose and is_dev:
                 from tqdm import tqdm
                 new_fields = pd.DataFrame(
-                    [self._apply(row) for _, row in tqdm(data.iterrows(), total=len(data))])
+                    [self._run(row) for _, row in tqdm(data.iterrows(), total=len(data))])
             else:
                 new_fields = pd.DataFrame(
-                    [self._apply(row) for _, row in data.iterrows()])
+                    [self._run(row) for _, row in data.iterrows()])
             data[new_fields.columns] = new_fields
         else:
-            data.update(self._apply(data))
+            data.update(self._run(data))
         return data
