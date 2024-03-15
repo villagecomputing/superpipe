@@ -3,7 +3,8 @@ import requests
 import json
 import pandas as pd
 from typing import Callable, Union, Optional, Dict
-from superpipe.steps.step import Step
+from superpipe.steps.step import Step, StepResult
+from superpipe.steps.utils import with_statistics
 
 
 class SERPEnrichmentStep(Step):
@@ -60,7 +61,7 @@ class SERPEnrichmentStep(Step):
         response = requests.request("POST", url, headers=headers, data=payload)
         return response.text
 
-    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> StepResult:
         """
         Applies the SERP enrichment step to a single row of data.
 
@@ -74,10 +75,7 @@ class SERPEnrichmentStep(Step):
             Dict: A dictionary containing the enriched data.
         """
         prompt = self.prompt
-        postprocess = self.postprocess
-        result = self._get_search_results(prompt(row))
-        if postprocess is not None:
-            result = postprocess(result)
-        return {
-            self.name: result
-        }
+        postprocess = self.postprocess if self.postprocess is not None else lambda x: x
+        def fn(x): return postprocess(self._get_search_results(prompt(x)))
+        result, statistics = with_statistics(fn)(row)
+        return StepResult(fields={self.name: result}, statistics=statistics)

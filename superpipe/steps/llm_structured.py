@@ -3,7 +3,7 @@ import pandas as pd
 from pydantic import BaseModel
 from superpipe.llm import get_structured_llm_response, StructuredLLMResponse
 from superpipe.pydantic import describe_pydantic_model
-from superpipe.steps.llm_step import LLMStep
+from superpipe.steps.llm_step import LLMStep, StepResult
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -85,8 +85,8 @@ class LLMStructuredStep(LLMStep, Generic[T]):
             # TODO: need better error logging here include stacktrace
             response = StructuredLLMResponse(
                 success=False, error=str(e), latency=0)
-        self._update_statistics(response)
         result = {f"__{self.name}__": response.model_dump()}
+        statistics = self._get_row_statistics(response)
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content
@@ -97,4 +97,4 @@ class LLMStructuredStep(LLMStep, Generic[T]):
                         f"Step {self.name}: Missing field {field} in response {content}")
                 val = content.get(field)
                 result[field] = val or ""
-        return result
+        return StepResult(fields=result, statistics=statistics)

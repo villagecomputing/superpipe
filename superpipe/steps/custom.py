@@ -1,7 +1,8 @@
 from typing import Union, Dict, Callable, TypeVar, Generic
 from pydantic import BaseModel
 import pandas as pd
-from superpipe.steps.step import Step
+from superpipe.steps.step import Step, StepResult
+from superpipe.steps.utils import with_statistics
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -50,7 +51,6 @@ class CustomStep(Step, Generic[T]):
         """
         transform = self.transform
         fields = self.out_schema.model_fields.keys()
-        transformed = transform(row)
-        return {
-            field: transformed[field] for field in fields
-        }
+        transformed, statistics = with_statistics(transform)(row)
+        result = {f: transformed[f] for f in fields}
+        return StepResult(fields=result, statistics=statistics)

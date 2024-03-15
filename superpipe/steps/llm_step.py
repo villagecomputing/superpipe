@@ -13,8 +13,6 @@ class LLMStep(Step):
     Attributes:
         model (str): The identifier of the LLM to be used.
         prompt (Callable[[Union[Dict, pd.Series]], str]): A function that takes input data and returns a prompt string.
-        name (str, optional): The name of the step. Defaults to None.
-        statistics (LLMStepStatistics): Statistics about the LLM calls made by this step.
     """
 
     def __init__(

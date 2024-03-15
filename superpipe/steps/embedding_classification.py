@@ -94,6 +94,7 @@ class EmbeddingClassificationStep(Step):
     def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         pass
 
+    # TODO: need to manually update the statistics
     def run(self, data: Union[pd.DataFrame, Dict], verbose=True):
         """
         Applies the classification step to input data.
