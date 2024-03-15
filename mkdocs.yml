@@ -26,18 +26,19 @@ nav:
       - why.md
       - use_cases.md
       - principles.md
+      - roadmap.md
   - Using Superpipe:
       - using/index.md
       - Pipelines: using/pipelines.md
       - Models: using/models.md
       - Grid Search: using/grid_search.md
       - Steps:
-        - using/steps/index.md
-        - using/steps/LLMStep.md
-        - using/steps/LLMStructuredStep.md
-        - using/steps/SERPStep.md
-        - using/steps/EmbeddingClassificationStep.md
-        - using/steps/CustomStep.md
+          - using/steps/index.md
+          - using/steps/LLMStep.md
+          - using/steps/LLMStructuredStep.md
+          - using/steps/SERPStep.md
+          - using/steps/EmbeddingClassificationStep.md
+          - using/steps/CustomStep.md
   - Examples:
       - examples/index.md
       - Example 1: examples/index.md
@@ -82,6 +83,8 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - tables
+  - toc:
+      permalink: true
 
 social:
   - icon: fontawesome/brands/twitter

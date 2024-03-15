@@ -31,7 +31,9 @@ joke_step.apply(dataframe)
 
     - **Modularity** &mdash;
 
-Superpipe comes with a handful of built-in steps but it's easy (and recommended) to create your own steps by subclassing `CustomStep`. This allows you to do pretty much anything inside a step - call a third party api, lookup a DB, etc. For more details see the [steps](/) section.
+Superpipe comes with a handful of built-in steps but it's easy (and recommended) to create your own steps by subclassing `CustomStep`. This allows you to do pretty much anything inside a step - call a third party api, lookup a DB, etc.
+
+For more details see the [steps](/) section.
 
 ### Pipelines
 
@@ -102,4 +104,11 @@ pipeline.update_params({
 
 ## Optimization
 
-TODO
+Building and evaluating your pipeline is a good start, but you rarely get the best accuracy-cost-speed tradeoff on the first attempt, and there's a lot of low-hanging fruit to optimize. There are two ways to optimize your solution:
+
+1. Tune the parameters of your pipeline
+2. Try a different technique (ie. build a different pipeline)
+
+For 1, Superpipe lets you run a [hyperparameter grid search](/). This means you can try different models, values of K, prompts, etc. on the same pipeline and dataset. Then you can compare the results across accuracy, cost, speed and pick the one that's best for your situation.
+
+For 2, we're working on a AI-powered copilot that lets you experiment with different techniques.
