@@ -62,13 +62,18 @@ class Pipeline:
         self.score = None
         self.statistics = PipelineStatistics()
 
-    def run(self, data: Union[pd.DataFrame, Dict], verbose=True):
-        for step in self.steps:
-            step.run(data, verbose)
-        if isinstance(data, pd.DataFrame):
-            self.data = data
-            if self.evaluation_fn is not None:
-                self.evaluate()
+    def run(self, data: Union[pd.DataFrame, Dict], row_wise=True, verbose=True):
+        if row_wise and isinstance(data, pd.DataFrame):
+            for _, row in data.iterrows():
+                for step in self.steps:
+                    step.run(row, verbose)
+        else:
+            for step in self.steps:
+                step.run(data, verbose)
+            if isinstance(data, pd.DataFrame):
+                self.data = data
+                if self.evaluation_fn is not None:
+                    self.evaluate()
         self._aggregate_statistics(data)
         return data
 
