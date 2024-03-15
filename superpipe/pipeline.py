@@ -2,7 +2,7 @@ from typing import List, Callable, Union, Dict, Optional
 from collections import defaultdict
 from dataclasses import dataclass, field
 import pandas as pd
-from superpipe.steps import Step, LLMStep
+from superpipe.steps import Step, LLMStep, LLMStructuredStep
 from prettytable import PrettyTable
 
 
@@ -99,7 +99,8 @@ class Pipeline:
         else:
             success = True
         for step in self.steps:
-            if isinstance(step, LLMStep):
+            # TODO: this needs to work for CustomSteps that make LLM calls too
+            if isinstance(step, LLMStep) or isinstance(step, LLMStructuredStep):
                 model = step.model
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens

@@ -5,13 +5,13 @@
 At a high level Superpipe works by taking input data and transforming it in steps to get the desired output. Each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended. For example, here's how you'd invoke the built-in `LLMStep`.
 
 ```python
-from superpipe.steps import SimpleLLMStep
+from superpipe.steps import LLMStep
 
 joke_prompt = lambda row: f"""
 Tell me a joke about {row['topic']}
 """
 
-joke_step = SimpleLLMStep(
+joke_step = LLMStep(
   prompt=joke_prompt,
   model=models.gpt35,
   name="joke"
