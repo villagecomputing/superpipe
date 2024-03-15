@@ -1,21 +1,11 @@
 from typing import Callable, Union, Dict, TypeVar, Generic
 import pandas as pd
 from pydantic import BaseModel
-from superpipe.steps.step import Step
 from superpipe.llm import get_structured_llm_response, StructuredLLMResponse
 from superpipe.pydantic import describe_pydantic_model
+from superpipe.steps.llm_step import LLMStep
 
 T = TypeVar('T', bound=BaseModel)
-
-
-class LLMStepStatistics(BaseModel):
-    input_tokens: int = 0
-    output_tokens: int = 0
-    num_success: int = 0
-    num_failure: int = 0
-    total_latency: float = 0.0
-    input_cost: float = 0.0
-    output_cost: float = 0.0
 
 
 BASE_PROMPT = """
@@ -26,7 +16,7 @@ Return your response in the format given below as a Pydantic model schema:
 """
 
 
-class LLMStructuredStep(Step, Generic[T]):
+class LLMStructuredStep(LLMStep, Generic[T]):
     """
     A step in a pipeline that utilizes a Language Model (LLM) to process data.
 
@@ -56,44 +46,10 @@ class LLMStructuredStep(Step, Generic[T]):
             out_schema (T): The Pydantic model that defines the expected structure of the LLM's response.
             name (str, optional): The name of the step. Defaults to None.
         """
-        super().__init__(name)
-        self.model = model
-        self.prompt = prompt
+        super().__init__(model, prompt, name)
         self.out_schema = out_schema
-        self.statistics = LLMStepStatistics()
 
-    def update_params(self, params: Dict):
-        """
-        Updates the parameters of the step.
-
-        This method resets the statistics to ensure they reflect the performance after the parameter update.
-
-        Args:
-            params (Dict): A dictionary of parameters to update.
-        """
-        super().update_params(params)
-        self.statistics = LLMStepStatistics()
-
-    def _update_statistics(self, response: StructuredLLMResponse):
-        """
-        Updates the statistics based on the response from the LLM.
-
-        Args:
-            response (StructuredLLMResponse): The response from the LLM.
-        """
-        self.statistics.input_tokens += response.input_tokens
-        self.statistics.output_tokens += response.output_tokens
-        self.statistics.total_latency += response.latency
-        if response.success:
-            self.statistics.num_success += 1
-        else:
-            self.statistics.num_failure += 1
-
-        # Compute the cost
-        self.statistics.input_cost += response.input_cost
-        self.statistics.output_cost += response.output_cost
-
-    def compile_structured_prompt(self, input: dict):
+    def _compile_structured_prompt(self, input: dict):
         """
         Compiles a structured prompt from the input data.
 
@@ -123,7 +79,7 @@ class LLMStructuredStep(Step, Generic[T]):
         model = self.model
         fields = self.out_schema.model_fields.keys()
         try:
-            compiled_prompt = self.compile_structured_prompt(row)
+            compiled_prompt = self._compile_structured_prompt(row)
             response = get_structured_llm_response(compiled_prompt, model)
         except Exception as e:
             # TODO: need better error logging here include stacktrace

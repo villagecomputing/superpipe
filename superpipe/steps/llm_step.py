@@ -1,16 +1,7 @@
-from typing import Callable, Union, Dict, TypeVar, Generic
+from typing import Callable, Union, Dict
 import pandas as pd
-from pydantic import BaseModel
-from superpipe.steps.step import Step
+from superpipe.steps.step import Step, StepResult, StepRowStatistics
 from superpipe.llm import get_llm_response, LLMResponse
-
-
-class LLMStepStatistics(BaseModel):
-    input_tokens: int = 0
-    output_tokens: int = 0
-    num_success: int = 0
-    num_failure: int = 0
-    total_latency: float = 0.0
 
 
 class LLMStep(Step):
@@ -42,35 +33,24 @@ class LLMStep(Step):
         super().__init__(name)
         self.model = model
         self.prompt = prompt
-        self.statistics = LLMStepStatistics()
 
-    def update_params(self, params: Dict):
+    def _get_row_statistics(self, response: LLMResponse):
         """
-        Updates the parameters of the step.
-        Also resets the statistics to ensure they reflect the performance after the parameter update.
-
-        Args:
-            params (Dict): A dictionary of parameters to update.
-        """
-        super().update_params(params)
-        self.statistics = LLMStepStatistics()
-
-    def _update_statistics(self, response: LLMResponse):
-        """
-        Updates the statistics based on the response from the LLM.
+        Create a StepRowStatistics object based on the response from the LLM.
 
         Args:
             response (LLMResponse): The response from the LLM.
         """
-        self.statistics.input_tokens += response.input_tokens
-        self.statistics.output_tokens += response.output_tokens
-        self.statistics.total_latency += response.latency
-        if response.success:
-            self.statistics.num_success += 1
-        else:
-            self.statistics.num_failure += 1
+        return StepRowStatistics(
+            input_tokens=response.input_tokens,
+            output_tokens=response.output_tokens,
+            latency=response.latency,
+            success=response.success,
+            input_cost=response.input_cost,
+            output_cost=response.output_cost
+        )
 
-    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> StepResult:
         """
         Applies the LLM step to a single row of data.
 
@@ -90,9 +70,9 @@ class LLMStep(Step):
             # TODO: need better error logging here include stacktrace
             response = LLMResponse(
                 success=False, error=str(e), latency=0)
-        self._update_statistics(response)
         result = {f"__{self.name}__": response.model_dump()}
+        statistics = self._get_row_statistics(response)
         # TODO: how should we handle failure cases?
         if response.success:
             result[f"{self.name}"] = response.content
-        return result
+        return StepResult(fields=result, statistics=statistics)

@@ -1,6 +1,31 @@
 from typing import Union, Dict
+from pydantic import BaseModel
 import pandas as pd
 from superpipe.config import is_dev
+
+
+class StepStatistics(BaseModel):
+    input_tokens: int = 0
+    output_tokens: int = 0
+    num_success: int = 0
+    num_failure: int = 0
+    total_latency: float = 0.0
+    input_cost: float = 0.0
+    output_cost: float = 0.0
+
+
+class StepRowStatistics(BaseModel):
+    input_tokens: int = 0
+    output_tokens: int = 0
+    success: bool = True
+    latency: float = 0.0
+    input_cost: float = 0.0
+    output_cost: float = 0.0
+
+
+class StepResult(BaseModel):
+    fields: Dict
+    statistics: StepRowStatistics
 
 
 class Step():
@@ -27,10 +52,35 @@ class Step():
             name (str, optional): The name of the step. Defaults to the class name if None.
         """
         self.name = name or self.__class__.__name__
+        self.reset_statistics()
+
+    def reset_statistics(self):
+        """
+        Resets the statistics for the step.
+        """
+        self.statistics = StepStatistics()
+
+    def _update_statistics(self, statistics: StepRowStatistics):
+        """
+        Updates the statistics based on the response from the LLM.
+
+        Args:
+            response (LLMResponse): The response from the LLM.
+        """
+        self.statistics.input_tokens += statistics.input_tokens
+        self.statistics.output_tokens += statistics.output_tokens
+        self.statistics.total_latency += statistics.latency
+        if statistics.success:
+            self.statistics.num_success += 1
+        else:
+            self.statistics.num_failure += 1
+        self.statistics.input_cost += statistics.input_cost
+        self.statistics.output_cost += statistics.output_cost
 
     def update_params(self, params: Dict):
         """
         Updates the step's parameters with values from a dictionary.
+        Also resets the step's statistics.
 
         Args:
             params (Dict): A dictionary of parameters to update.
@@ -38,8 +88,9 @@ class Step():
         for k, v in params.items():
             if hasattr(self, k):
                 setattr(self, k, v)
+        self.reset_statistics()
 
-    def _run(self, row: Union[pd.Series, Dict]) -> Dict:
+    def _run(self, row: Union[pd.Series, Dict]) -> StepResult:
         """
         Abstract method for applying the step's transformation to a single row.
 
@@ -77,12 +128,16 @@ class Step():
         if isinstance(data, pd.DataFrame):
             if verbose and is_dev:
                 from tqdm import tqdm
-                new_fields = pd.DataFrame(
-                    [self._run(row) for _, row in tqdm(data.iterrows(), total=len(data))])
+                results = [self._run(row) for _, row in tqdm(
+                    data.iterrows(), total=len(data))]
             else:
-                new_fields = pd.DataFrame(
-                    [self._run(row) for _, row in data.iterrows()])
+                results = [self._run(row) for _, row in data.iterrows()]
+            for r in results:
+                self._update_statistics(r.statistics)
+            new_fields = pd.DataFrame([r.fields for r in results])
             data[new_fields.columns] = new_fields
         else:
-            data.update(self._run(data))
+            result = self._run(data)
+            self._update_statistics(result.statistics)
+            data.update(result.fields)
         return data

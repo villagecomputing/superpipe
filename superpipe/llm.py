@@ -5,17 +5,6 @@ from superpipe.models import gpt35, get_cost
 from superpipe.openai import get_client
 
 
-class StructuredLLMResponse(BaseModel):
-    input_tokens: int = 0
-    output_tokens: int = 0
-    input_cost: float = 0.0
-    output_cost: float = 0.0
-    success: bool = False
-    error: str = None
-    latency: float = 0.0
-    content: dict = {}
-
-
 class LLMResponse(BaseModel):
     input_tokens: int = 0
     output_tokens: int = 0
@@ -25,6 +14,10 @@ class LLMResponse(BaseModel):
     error: str = None
     latency: float = 0.0
     content: str = ""
+
+
+class StructuredLLMResponse(LLMResponse):
+    content: dict = {}
 
 
 def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
