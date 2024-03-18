@@ -37,20 +37,20 @@ In a general unstructured -> structured problem, you're given some unstructured 
 
 Superpipe can help you build the first version of your pipeline, but you can also use your favorite LLM library (like langchain or LlamaIndex), make API calls, use an embedding provider, etc.
 
-Regardless of what you use to define the logic, it helps to break your pipeline into logically separate steps and wrap them inside the Superpipe `CustomStep` class. [See why here](/).
+Regardless of what you use to define the logic, it helps to break your pipeline into logically separate steps and wrap them inside the Superpipe `CustomStep` class. [See why here](./using/steps/CustomStep.md).
 
 #### 2. Label your data using the pipeline (if ground truth labels aren't provided)
 
 If you already have (high-quality) ground truth labels, you can skip this step. Otherwise you will need to create these labels to evaluate against. To do this we recommend
 
 - using the highest quality models available (currently GPT-4 and Claude 3 Opus) and the most powerful techniques to build your pipeline (Step 1).
-- validating and correcting the labels manually ([Superpipe Studio](/) can help with this).
+- validating and correcting the labels manually ([Superpipe Studio](./studio/) can help with this).
 
 #### 3. Try different techniques/parameters and evaluate them against each other with a grid search
 
 Now try switching to less powerful models to reduce cost and increase speed, while accuracy remains acceptably high compared to the more powerful model you used in Step 1.
 
-Superpipe makes it easy to swap out different models for each step and tweak the parameters of each step while easily evaluating each parameter choice on the same dataset. See the [Optimization](/) section and the [Grid Search](/) page.
+Superpipe makes it easy to swap out different models for each step and tweak the parameters of each step while easily evaluating each parameter choice on the same dataset. See the [Optimization](/) section and the [Grid Search](./using/grid_search.md) page.
 
 Pick the approach and parameters that make the best accuracy-cost-speed tradeoff for your situation.
 
