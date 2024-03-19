@@ -69,7 +69,7 @@ class GridSearch:
         """
         return {f"{step}__{param}": value for step, params in params_dict.items() for param, value in params.items()}
 
-    def apply(self, df: pd.DataFrame, output_dir=None, verbose=False):
+    def run(self, df: pd.DataFrame, output_dir=None, verbose=False):
         """
         Applies the grid search on a given DataFrame and optionally saves the results to CSV files.
 
@@ -86,7 +86,7 @@ class GridSearch:
             print(f"Iteration {i+1} of {len(self.params_list)}")
             print("Params: ", params)
             self.pipeline.update_params(params)
-            df_result = self.pipeline.apply(df.copy(), verbose)
+            df_result = self.pipeline.run(df.copy(), verbose)
             index = hash(json.dumps(params, sort_keys=True))
             if output_dir is not None:
                 full_path = os.path.join(os.getcwd(), output_dir)

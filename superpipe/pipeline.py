@@ -2,8 +2,9 @@ from typing import List, Callable, Union, Dict, Optional
 from collections import defaultdict
 from dataclasses import dataclass, field
 import pandas as pd
-from superpipe.steps import Step, LLMStep
 from prettytable import PrettyTable
+from superpipe.steps import Step, LLMStep, LLMStructuredStep
+from superpipe.config import is_dev
 
 
 @dataclass
@@ -47,7 +48,7 @@ class Pipeline:
         statistics (PipelineStatistics): Statistics of the pipeline's execution.
 
     Methods:
-        apply(data): Applies the pipeline steps to the input data.
+        run(data): Applies the pipeline steps to the input data.
         update_params(params): Updates the parameters of the pipeline steps.
         evaluate(evaluation_fn=None): Evaluates the processed data using an evaluation function.
         _aggregate_statistics(data): Aggregates statistics from the pipeline steps.
@@ -62,9 +63,23 @@ class Pipeline:
         self.score = None
         self.statistics = PipelineStatistics()
 
-    def apply(self, data: Union[pd.DataFrame, Dict], verbose=True):
-        for step in self.steps:
-            step.apply(data, verbose)
+    def run(self, data: Union[pd.DataFrame, Dict], row_wise=False, verbose=True):
+        # Note: currently running row-wise is ~40% slower than step-wise (because of memory overhead?)
+        if row_wise and isinstance(data, pd.DataFrame):
+            def fn(row):
+                for step in self.steps:
+                    step.run(row, verbose)
+                return row
+            if verbose and is_dev:
+                from tqdm import tqdm
+                tqdm.pandas(desc=f"Running pipeline row-wise")
+                results = data.progress_apply(fn, axis=1)
+            else:
+                results = data.apply(fn, axis=1)
+            data[results.columns] = results
+        else:
+            for step in self.steps:
+                step.run(data, verbose)
         if isinstance(data, pd.DataFrame):
             self.data = data
             if self.evaluation_fn is not None:
@@ -72,6 +87,7 @@ class Pipeline:
         self._aggregate_statistics(data)
         return data
 
+    # TODO: only include params relevant for each step, raise if param is not found in any step
     def update_params(self, params: Dict):
         for step in self.steps:
             global_params = params.get('global', {})
@@ -99,7 +115,8 @@ class Pipeline:
         else:
             success = True
         for step in self.steps:
-            if isinstance(step, LLMStep):
+            # TODO: this needs to work for CustomSteps that make LLM calls too
+            if isinstance(step, LLMStep) or isinstance(step, LLMStructuredStep):
                 model = step.model
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens
