@@ -4,7 +4,6 @@ import os
 import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
-from matplotlib.colors import LinearSegmentedColormap
 
 
 class GridSearch:
