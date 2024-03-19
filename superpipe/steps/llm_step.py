@@ -61,8 +61,8 @@ class LLMStep(Step):
             Dict: The processed data, including the LLM's response
         """
         model = self.model
+        compiled_prompt = self.prompt(row)
         try:
-            compiled_prompt = self.prompt(row)
             response = get_llm_response(compiled_prompt, model)
         except Exception as e:
             # TODO: need better error logging here include stacktrace

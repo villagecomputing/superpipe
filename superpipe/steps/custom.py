@@ -21,7 +21,6 @@ class CustomStep(Step, Generic[T]):
 
     def __init__(self,
                  transform: Callable[[Union[pd.Series, Dict]], Dict],
-                 out_schema: T,
                  name: str = None):
         """
         Initializes a new instance of the CustomStep class.
@@ -35,7 +34,6 @@ class CustomStep(Step, Generic[T]):
         """
         super().__init__(name)
         self.transform = transform
-        self.out_schema = out_schema
 
     def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
@@ -50,7 +48,6 @@ class CustomStep(Step, Generic[T]):
             Dict: The transformed row, with keys corresponding to the fields defined in the `out_schema` Pydantic model.
         """
         transform = self.transform
-        fields = self.out_schema.model_fields.keys()
         transformed, statistics = with_statistics(transform)(row)
-        result = {f: transformed[f] for f in fields}
+        result = {f"{self.name}": transformed}
         return StepResult(fields=result, statistics=statistics)

@@ -78,8 +78,8 @@ class LLMStructuredStep(LLMStep, Generic[T]):
         """
         model = self.model
         fields = self.out_schema.model_fields.keys()
+        compiled_prompt = self._compile_structured_prompt(row)
         try:
-            compiled_prompt = self._compile_structured_prompt(row)
             response = get_structured_llm_response(compiled_prompt, model)
         except Exception as e:
             # TODO: need better error logging here include stacktrace

@@ -66,8 +66,9 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
         prompt = self.prompt
         structured_model = self.structured_model
         fields = self.out_schema.model_fields.keys()
+        compiled_prompt = prompt(row)
         try:
-            response = get_llm_response(prompt(row), model)
+            response = get_llm_response(compiled_prompt, model)
             if response.success:
                 compiled_prompt = self._compile_structured_prompt(
                     response.content)
