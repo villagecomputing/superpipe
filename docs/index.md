@@ -52,17 +52,17 @@ We recommend the following workflow, and Superpipe is designed to make this work
 4. Pick the technique and parameters that maximize your objective function
 5. (Coming soon) Use the ground truth to fine-tune a cheaper/faster model
 
-For a deeper understanding of where Superpipe shines and whether it's the right tool for you, see the [why superpipe](/) page.
+For a deeper understanding of where Superpipe shines and whether it's the right tool for you, see the [why superpipe](./why.md) page.
 
 ## Concepts & Principles
 
 While Superpipe is straighforward to learn, it's important to understand some concepts and principles that will help you get the most out of Superpipe.
 
-Check out these [concepts](/) and [principles](/).
+Check out these [concepts](./concepts.md) and [principles](./principles.md).
 
 ## More Examples
 
-Find more detailed examples and code walthroughs in the [Examples](/) section of the docs. Or find jupyter notebooks in the [examples](/) folder in GitHub.
+Find more detailed examples and code walthroughs in the [Examples](./examples/) section of the docs. Or find jupyter notebooks in the [examples](./examples/) folder in GitHub.
 
 ## Contributing
 
