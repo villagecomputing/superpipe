@@ -27,7 +27,17 @@ Superpipe does not pretend to do everything, it does a few things and does them 
     1. You're building a demo or prototype.
     2. You just need to build something good enough and don't need to optimize across accuracy, cost and speed.
 
-## Workflow for building production-grade LLM pipelines
+## Building production-grade LLM pipelines
+
+We recommend the following workflow, and Superpipe is designed to make this workflow easy:
+
+1. Build the first version of your pipeline (usually using a powerful but expensive model like GPT-4)
+2. Use it to create ground truth labels (your golden set) to evaluate performance on
+3. Try different techniques and parameters and evaluate them against each other with a hyperparameter search
+4. Pick the technique and parameters that maximize your objective function
+5. (Coming soon) Use the ground truth to fine-tune a cheaper/faster model
+
+## The Superpipe workflow
 
 _To build production-grade LLM pipelines, software engineers need to think like scientists._
 

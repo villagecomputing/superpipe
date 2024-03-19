@@ -10,7 +10,6 @@ theme:
   features:
     - navigation.tracking
     - navigation.sections
-    - navigation.tabs
     - navigation.tracking
     - content.code.annotate
     - content.code.copy
@@ -22,6 +21,7 @@ theme:
 nav:
   - Introduction:
       - index.md
+      - start.md
       - concepts.md
       - why.md
       - use_cases.md
@@ -44,6 +44,7 @@ nav:
       - Example 1: examples/index.md
   - Studio:
       - studio/index.md
+  - test: index.md
 
 markdown_extensions:
   - admonition
