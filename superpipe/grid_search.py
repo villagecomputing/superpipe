@@ -97,52 +97,62 @@ class GridSearch:
             result = {
                 **GridSearch._flatten_params_dict(params),
                 'score': self.pipeline.score,
-                'input_tokens': self.pipeline.statistics.input_tokens,
-                'output_tokens': self.pipeline.statistics.output_tokens,
                 'input_cost': self.pipeline.statistics.input_cost,
                 'output_cost': self.pipeline.statistics.output_cost,
+                'total_latency': self.pipeline.statistics.total_latency,
+                'input_tokens': self.pipeline.statistics.input_tokens,
+                'output_tokens': self.pipeline.statistics.output_tokens,
                 'num_success': self.pipeline.statistics.num_success,
                 'num_failure': self.pipeline.statistics.num_failure,
-                'total_latency': self.pipeline.statistics.total_latency,
                 'index': index
             }
             print("Result: ", result)
             results.append(result)
         self.results = pd.DataFrame(results)
         self._update_best()
-        def percentile_norm(col, reverse=False):
-            # Normalize the column based on percentiles
-            lower = self.results[col].quantile(0)
-            upper = self.results[col].quantile(1)
-            if reverse:  # Lower values are better
-                norm_col = 1 - (self.results[col] - lower) / (upper - lower)
-            else:  # Higher values are better
-                norm_col = (self.results[col] - lower) / (upper - lower)
-            # Clip the values to keep them between 0 and 1
-            norm_col = norm_col.clip(0, 1)
-            return norm_col
 
-        normalized_results = self.results.copy()
-        for col in ['score']:
-            normalized_results[col] = percentile_norm(col)
-        for col in ['input_cost', 'output_cost', 'total_latency']:
-            normalized_results[col] = percentile_norm(col, reverse=True)
+        def _gradient_color(val, min_val, median_val, max_val, reverse=False):
+            if pd.isna(val):
+                return 'background-color: white; color: black'  # Handle NaN values
 
-        # Define the colors for the colormap (green, white, red)
-        cmap_colors = [(0, 1, 0), (1, 1, 1), (1, 0, 0)]  # G -> W -> R
+            # Ensure denominator is not zero before division to avoid NaN results
+            if min_val != median_val and median_val != max_val:
+                if val < median_val:
+                    closeness = (val - min_val) / (median_val - min_val)
+                    red = 255 if not reverse else int(closeness * 255)
+                    green = int(closeness * 255) if not reverse else 255
+                    color = f'rgb({red},{green},0)'
+                else:
+                    closeness = (val - median_val) / (max_val - median_val)
+                    green = 255 if not reverse else int((1 - closeness) * 255)
+                    red = int((1 - closeness) * 255) if not reverse else 255
+                    color = f'rgb({red},{green},0)'
+            else:
+                # Fallback color if unable to calculate closeness due to equal min, median, and max values
+                color = 'rgb(255,255,0)' if not reverse else 'rgb(0,255,255)'
 
-        # Create the colormap
-        custom_cmap = LinearSegmentedColormap.from_list("custom_cmap", cmap_colors)
-        
-        # Apply the gradient based on the normalized percentiles
-        # Use the normalized DataFrame for coloring but display the original results
-        styled_results = self.results.style.background_gradient(
-            subset=['score'], cmap=custom_cmap, low=self.results['score'].min(), high=self.results['score'].max(), 
-            vmin=self.results['score'].min(), vmax=self.results['score'].max()
-        ).background_gradient(
-            subset=['input_cost', 'output_cost', 'total_latency'], cmap=custom_cmap, low=0, high=1,
-            vmin=0, vmax=1  # Assuming normalized values are already between 0 and 1
-        )
+            return f'background-color: {color}; color: black;'  
 
-        return styled_results
+        def _apply_gradients(df, higher_columns, lower_columns):
+            # Calculate min, median, and max for each column and store in a dictionary
+            styles = {col: {'min_val': df[col].min(), 'median_val': df[col].median(), 'max_val': df[col].max(), 'reverse': col in lower_columns} for col in higher_columns + lower_columns}
+            
+            def apply_style(val, col):
+                # Directly pass the values without unpacking
+                info = styles[col]
+                return _gradient_color(val, info['min_val'], info['median_val'], info['max_val'], reverse=info['reverse'])
+            
+            styler = df.style
+            for col in styles:
+                styler = styler.applymap(lambda val, col=col: apply_style(val, col), subset=[col])
+            return styler
 
+        # Specify the columns you want to apply the gradient to
+        higher_columns = ['score']
+        lower_columns = ['input_cost', 'output_cost', 'total_latency']
+
+        # Apply the gradient function to the specified columns
+        styled_df = _apply_gradients(self.results, higher_columns, lower_columns)
+
+        # Display the styled DataFrame in a Jupyter notebook
+        return styled_df
