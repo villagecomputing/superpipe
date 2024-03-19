@@ -77,6 +77,7 @@ class Step():
         self.statistics.input_cost += statistics.input_cost
         self.statistics.output_cost += statistics.output_cost
 
+    # TODO: validate params dict (raise if invalid keys)
     def update_params(self, params: Dict):
         """
         Updates the step's parameters with values from a dictionary.
@@ -107,7 +108,7 @@ class Step():
         """
         raise NotImplementedError
 
-    def run(self, data: Union[pd.DataFrame, Dict], verbose=True):
+    def run(self, data: Union[pd.DataFrame, Dict, pd.Series], verbose=True):
         """
         Applies the step's transformation to a DataFrame or dictionary.
 
@@ -123,15 +124,13 @@ class Step():
         Returns:
             Union[pd.DataFrame, Dict]: The transformed data.
         """
-        if verbose:
-            print(f"Running step {self.name}...")
         if isinstance(data, pd.DataFrame):
             if verbose and is_dev:
                 from tqdm import tqdm
-                results = [self._run(row) for _, row in tqdm(
-                    data.iterrows(), total=len(data))]
+                tqdm.pandas(desc=f"Applying step {self.name}")
+                results = data.progress_apply(self._run, axis=1)
             else:
-                results = [self._run(row) for _, row in data.iterrows()]
+                results = data.apply(self._run, axis=1)
             for r in results:
                 self._update_statistics(r.statistics)
             new_fields = pd.DataFrame([r.fields for r in results])
@@ -139,5 +138,9 @@ class Step():
         else:
             result = self._run(data)
             self._update_statistics(result.statistics)
-            data.update(result.fields)
+            if isinstance(data, pd.Series):
+                for key, value in result.fields.items():
+                    data.loc[key] = value
+            else:
+                data.update(result.fields)
         return data

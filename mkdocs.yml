@@ -37,7 +37,7 @@ nav:
           - using/steps/LLMStep.md
           - using/steps/LLMStructuredStep.md
           - using/steps/SERPStep.md
-          - using/steps/EmbeddingClassificationStep.md
+          - using/steps/EmbeddingSearchStep.md
           - using/steps/CustomStep.md
   - Examples:
       - examples/index.md
