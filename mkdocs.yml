@@ -22,6 +22,7 @@ theme:
 nav:
   - Introduction:
       - index.md
+      - start.md
       - concepts.md
       - why.md
       - use_cases.md

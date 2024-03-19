@@ -1,25 +1,26 @@
 # Custom step
-Custom steps allow you to implement arbitrary python in your pipeline. 
 
-Custom steps require a function, called a `transform` as well as pydandic model that defines the output schema. Optionally you can provide a name. 
+Custom steps allow you to implement arbitrary python in your pipeline.
 
-The logic really can be arbitrary, including API calls, Langchain chains, local generative models or simple data cleaning. 
+Custom steps require a function, called a `transform` as well as pydandic model that defines the output schema. Optionally you can provide a name.
+
+The logic really can be arbitrary, including API calls, Langchain chains, local generative models or simple data cleaning.
 
 ## Example
-This is an extremely simple custom step, implemented merely as a lambda function. 
-```python
-class Category(BaseModel):
-    predicted_category: str = Field(description="The most accurate category")
 
+This is an extremely simple custom step, implemented merely as a lambda function.
+
+```python
 select_category_step = steps.CustomStep(
-  transform=lambda row: {"predicted_category": row[f'category{row["category_index"]}']},
-  out_schema=Category,
+  transform=lambda row: row[f'category{row["category_index"]}'],
   name="select_category"
 )
 ```
 
 ### API call as a custom step
+
 In this example we wrap an API call in a custom step. The result will be three new columns to our dataframe as defined by the pydantic model.
+
 ```python
 import json
 from datetime import datetime
@@ -28,7 +29,7 @@ from pydantic import BaseModel, Field
 
 api_key = 'API_KEY'
 
-def get_linked_data(profile, api_key=api_key):
+def get_linkedin_data(profile, api_key=api_key):
 
     headers = {'Authorization': 'Bearer ' + api_key}
     api_endpoint = 'https://nubela.co/proxycurl/api/v2/linkedin'
@@ -74,14 +75,8 @@ def get_linked_data(profile, api_key=api_key):
 
     return({'headline': headline, 'most_recent_job': most_recent_job.get('title'), 'years_of_experience': years_of_experience})
 
-class Profile(BaseModel):
-    headline: str = Field(description="The person's linkedin Headline"),
-    most_recent_job: str = Field(description="Most recent job"),
-    years_of_experience: int = Field(description="Years of experience post college"),
-
 linkedin_step = steps.CustomStep(
-    transform=get_linked_data,
-    out_schema=Profile,
+    transform=get_linkedin_data,
     name='linkedin'
 )
 
