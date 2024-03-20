@@ -1,20 +1,26 @@
 # Use Cases
 
-Superpipe is most useful for data extraction, classification, and tagging.
+Superpipe is useful for any data labeling, extraction, classification, or tagging task where the output is structured and the structure is known.
 
 ## Extraction
 
 ### Document extraction
 
-### Form-filling
+Extract entities and facts from PDFs, emails, websites, etc.
 
-### Tagging
+### Product Catalog tagging
+
+Enrich your product catalog with AI-generated tags to power search, filtering and recommendations.
 
 ### Query analysis
+
+Extract filter arguments from natural language search queries.
 
 ## Classification
 
 ### Product Categorization
+
+Categorize
 
 ### Sentiment analysis
 

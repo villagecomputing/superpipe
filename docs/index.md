@@ -1,6 +1,6 @@
 # Superpipe - LLM pipelines for structured data extraction and classification
 
-_A lightweight framework to build, evaluate and optimize LLM-based data transformation, extraction and classification pipelines._
+_A lightweight framework to build, evaluate and optimize LLM-based pipelines for data labeling, extraction, classification, and tagging._
 
 <p align="center"><img src="./assets/superpipe_venn.png" style="width: 400px;" /></p>
 
