@@ -8,7 +8,6 @@ site_url: https://villagecomputing.co/superpipe
 theme:
   name: material
   features:
-    - navigation.tracking
     - navigation.sections
     - navigation.tracking
     - content.code.annotate
@@ -41,7 +40,11 @@ nav:
           - using/steps/CustomStep.md
   - Examples:
       - examples/index.md
-      - Example 1: examples/index.md
+      - examples/product_categorization/product_categorization.ipynb
+      - examples/business_classification/business_classification.ipynb
+      - examples/comparing_pipelines/furniture.ipynb
+      - examples/generative_output/jokes.ipynb
+      
   - Studio:
       - studio/index.md
   - test: index.md
@@ -86,6 +89,9 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+
+plugins:
+    - mkdocs-jupyter
 
 social:
   - icon: fontawesome/brands/twitter
