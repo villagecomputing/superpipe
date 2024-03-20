@@ -1,69 +1,114 @@
-# Using Superpipe
+# Concepts
 
-## Installation
-To get started, install Superpipe by running 
+### Steps
 
-`pip install superpipe-py`
+At a high level Superpipe works by taking input data and transforming it in steps to get the desired output. Each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended. For example, here's how you'd invoke the built-in `LLMStep`.
 
-
-And then import Superpipe into your project or Jupyter notebook
 ```python
-from superpipe import *
+from superpipe.steps import LLMStep
+
+joke_prompt = lambda row: f"""
+Tell me a joke about {row['topic']}
+"""
+
+joke_step = LLMStep(
+  prompt=joke_prompt,
+  model=models.gpt35,
+  name="joke"
+)
+joke_step.run(dataframe)
 ```
 
-## Build, eval, optimize
+??? question "Why steps?"
 
-There are three stages of using Superpipe.
+    When doing data transformation, extraction or classification using LLMs, it's crucial to think in steps.
 
-1. **Building** a pipeline
-2. **Evaluating** your pipeline
-3. **Optimizing** your pipeline
+    - **Increased accuracy** &mdash;
 
-### Build
-Any multistep LLM workflow can be converted to a Superpipe pipeline. 
+    - **Separation of concerns** &mdash;
 
-Take a look at our [concepts page](../concepts) for a better understanding of Superpipe concepts. 
+    - **Interpretability and debugging** &mdash;
 
-Before you can start using Superpipe you need:
+    - **Modularity** &mdash;
 
-- **A well defined task** - Superpipe is designed well defined tasks like categorization, tagging, and extraction. You should know your goal before you get started. 
-- **Input Data** - the dataset you want to transform with your pipeline. Superpipe acts over Pandas Dataframes or dictionaries. 
+Superpipe comes with a handful of built-in steps but it's easy (and recommended) to create your own steps by subclassing `CustomStep`. This allows you to do pretty much anything inside a step - call a third party api, lookup a DB, etc.
 
-With that in hand, you will use Superpipe to build:
+For more details see the [steps](/) section.
 
-- **[Steps](./steps/)** - each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
-- **[Pipeline](./pipelines.md)** -  steps are chained together to create a pipeline. 
+### Pipelines
 
-### Evaluate
-Once you've built your pipeline it's time to see how well it works. This requires:
+Steps are chained together to create a pipeline. Similar to a step, a pipeline also takes an input dataframe or dictionary and returns a new dataframe or dictionary with all the outputs of all the steps appended.
 
-- **Evaluation function** - a function that defines what "correct" is. In many cases this is a string comparison with your ground truth labels but could be any arbitrary function, including a call to an LLM to evaluate generative outputs.
-- **Ground truth labels** - the *correct* label for each row in your data. You can use an early version of your pipeline to generate *candidate labels* and manually inspect and correct to generate your ground truth.
+```python
+from superpipe.pipeline import Pipeline
 
-### Optimize
-The last step in using Superpipe is trying out many permutations of step paramaters to optimize your pipeline along **cost, accuracy, and speed**. 
+serp_step = ...
+top3_codes_step = ...
+top1_code_step = ...
 
-For example, you may want to try:
+pipeline = Pipeline(
+  steps=[
+    serp_step,
+    top3_codes_step,
+    top1_code_step]
+)
+```
 
-- GPT-4 vs. Mixtral
-- 3, 5, 7 retrieval chunks
-- Chain of thought vs. direct prompting
-- Few shot prompts
+For more details see the [pipelines](/) section.
 
-One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every paramater permutation is trivial. 
+## Evaluation
 
-Pipeline optimization is done via a [grid search](./grid_search.md). 
+Pipelines can and should be evaluated to ensure they work well. Without proper evaluation, there's no way to know if the pipeline will perform well in the wild. There are two ways to do this - you can pass in an evaluation function when initializing the pipeline or call the `evaluate` method after the pipeline has run.
 
-A common usecase of Superpipe is understanding if you can "get away" with using an open source model. See the [models](./models.md) to learn how to use Superpipe with any LLM model from any provider. 
+You can provide any arbitrary evaluation function, as long as it takes in a `row` argument and returns a boolean. The simplest type of evaluation is a string comparison, but you can use arbitrarily complex eval functions including LLM calls.
 
-## The Superpipe process
+```python
+evaluator = lambda row: row['code'].lower() == row['code_groundtruth'].lower()
 
-- Read in your data 
-- Define your [steps](./steps/)
-- Combine steps and eval function into a [pipeline](./pipelines.md) 
-- Test your pipeline and generate *candidate ground truth*
-- Manually inspect and correct your ground truth
-- Define an evaluation function
-- Define a grid search paramater dictionary
-- Run a grid search
-- ...profit
+# option 1
+pipeline = Pipeline(
+  steps=[
+    serp_step,
+    top3_codes_step,
+    top1_code_step],
+  evaluation_fn=evaluator
+)
+
+# option 2
+pipeline.evaluate(evaluator)
+```
+
+## Parameters
+
+One of the design goals of Superpipe is to make pipelines and steps fully parametric - meaning every aspect of both is exposed as a parameter and can be changed even after the pipeline has been defined and run.
+
+For example in the `joke_step` defined above, the `model` and `prompt` that were passed in during initialization are parameters that can be easily update afterwards using the `update_params` function.
+
+```python
+from superpipe import models
+
+joke_step.update_params({
+  "model": models.gpt4
+})
+```
+
+The same applies to pipelines as well, but since pipelines themselves don't have parameters, only steps do, the `params` dict needs to contain the step parameters dict as the values and step names as the keys.
+
+```python
+pipeline.update_params({
+  "joke": {
+    "model": models.gpt4
+  }
+})
+```
+
+## Optimization
+
+Building and evaluating your pipeline is a good start, but you rarely get the best accuracy-cost-speed tradeoff on the first attempt, and there's a lot of low-hanging fruit to optimize. There are two ways to optimize your solution:
+
+1. Tune the parameters of your pipeline
+2. Try a different technique (ie. build a different pipeline)
+
+For 1, Superpipe lets you run a [hyperparameter grid search](/). This means you can try different models, values of K, prompts, etc. on the same pipeline and dataset. Then you can compare the results across accuracy, cost, speed and pick the one that's best for your situation.
+
+For 2, we're working on a AI-powered copilot that lets you experiment with different techniques.

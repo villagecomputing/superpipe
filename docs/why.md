@@ -1,4 +1,4 @@
-# Why superpipe?
+# Why Superpipe?
 
 There are several great tools that help you chain together LLM calls or build agent workflows that make for great prototypes or demos. Superpipe is different for two reasons:
 
