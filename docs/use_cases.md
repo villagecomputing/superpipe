@@ -1,15 +1,23 @@
 # Use Cases
 
-Superpipe is most useful for two types of structured data problems - extraction and classification.
+Superpipe is most useful for data extraction, classification, and tagging.
 
 ## Extraction
 
-### PDF extraction
+### Document extraction
 
 ### Form-filling
 
+### Tagging
+
+### Query analysis
+
 ## Classification
 
-### Product Categorization & Tagging
+### Product Categorization
+
+### Sentiment analysis
 
 ### Business classification
+
+### Content moderation

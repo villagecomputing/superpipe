@@ -36,12 +36,12 @@ nav:
   - Introduction:
       - index.md
       - start.md
-      - concepts.md
+      - workflow.md
       - why.md
       - use_cases.md
       - principles.md
       - roadmap.md
-  - Using Superpipe:
+  - Concepts:
       - using/index.md
       - Pipelines: using/pipelines.md
       - Models: using/models.md
@@ -83,8 +83,8 @@ markdown_extensions:
   - pymdownx.magiclink:
       normalize_issue_symbols: true
       repo_url_shorthand: true
-      user: jxnl
-      repo: instructor
+      user: villagecomputing
+      repo: superpipe
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.snippets:
