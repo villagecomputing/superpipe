@@ -1,4 +1,4 @@
-# SuperPipe - build, evaluate and optimize LLM pipelines
+# Superpipe - build, evaluate and optimize LLM pipelines
 
 _A lightweight framework for building, evaluating and optimizing data transformation and data extraction pipelines using LLMs. Designed for simplicity, rapid prototyping, evaluation and optimization._
 
@@ -13,7 +13,7 @@ _A lightweight framework for building, evaluating and optimizing data transforma
   <a href="https://pypi.python.org/pypi/superpipe-py"><img src="https://img.shields.io/pypi/dm/superpipe-py.svg"></a>
 </p>
 
-<p align="center"><img src="./comparison.png" style="width: 400px;" /></p>
+<p align="center"><img src="./docs/assets/superpipe_venn.png" style="width: 400px;" /></p>
 
 LLMs can make your treasure trove of unstructured data useful if only you could transform it into structured, or extract key fields from it. Today, building LLM-powered pipelines is difficult because LLMs are unpredictable. Unlike traditional software, you can't simply write unit and integration tests that confirm the correctness of your code.
 
@@ -23,7 +23,7 @@ With LLMs you need a different approach: you need to evaluate your code on a dat
 - Cost
 - Latency
 
-SuperPipe is an extremely lightweight framework that helps you build these pipelines such that you can:
+Superpipe is an extremely lightweight framework that helps you build these pipelines such that you can:
 
 - Easily run them on a dataset (not just a single data point)
 - Keep track of token usage, cost and latency
@@ -33,7 +33,7 @@ SuperPipe is an extremely lightweight framework that helps you build these pipel
 
 ## Get Started
 
-Installing SuperPipe is a breeze. Simply run `pip install superpipe-py` in your terminal.
+Installing Superpipe is a breeze. Simply run `pip install superpipe-py` in your terminal.
 
 ## License
 

@@ -2,7 +2,7 @@
 
 _A lightweight framework to build, evaluate and optimize LLM-based data transformation, extraction and classification pipelines._
 
-<p align="center"><img src="./superpipe.png" style="width: 400px;" /></p>
+<p align="center"><img src="./assets/superpipe_venn.png" style="width: 400px;" /></p>
 
 <hr>
 
