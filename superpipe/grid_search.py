@@ -4,6 +4,7 @@ import os
 import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
+from superpipe.util import df_apply_gradients
 
 
 class GridSearch:
@@ -69,7 +70,7 @@ class GridSearch:
         """
         return {f"{step}__{param}": value for step, params in params_dict.items() for param, value in params.items()}
 
-    def run(self, df: pd.DataFrame, output_dir=None, verbose=False):
+    def run(self, df: pd.DataFrame, output_dir=None, verbose=False, styled=True):
         """
         Applies the grid search on a given DataFrame and optionally saves the results to CSV files.
 
@@ -96,17 +97,22 @@ class GridSearch:
             result = {
                 **GridSearch._flatten_params_dict(params),
                 'score': self.pipeline.score,
-                'input_tokens': self.pipeline.statistics.input_tokens,
-                'output_tokens': self.pipeline.statistics.output_tokens,
                 'input_cost': self.pipeline.statistics.input_cost,
                 'output_cost': self.pipeline.statistics.output_cost,
+                'total_latency': self.pipeline.statistics.total_latency,
+                'input_tokens': self.pipeline.statistics.input_tokens,
+                'output_tokens': self.pipeline.statistics.output_tokens,
                 'num_success': self.pipeline.statistics.num_success,
                 'num_failure': self.pipeline.statistics.num_failure,
-                'total_latency': self.pipeline.statistics.total_latency,
                 'index': index
             }
             print("Result: ", result)
             results.append(result)
         self.results = pd.DataFrame(results)
         self._update_best()
+
+        if styled:
+            higher_columns = ['score']
+            lower_columns = ['input_cost', 'output_cost', 'total_latency']
+            return df_apply_gradients(self.results, higher_columns, lower_columns)
         return self.results
