@@ -114,11 +114,26 @@ pipeline = Pipeline([
 pipeline.run(names_df)
 ```
 
-**Outputs and metadata**
-TODO
+**Outputs**
+
+When the pipeline is run, it will write all the intermediate outputs and the final outputs into `names_df` and print the dataframe.
+
+<p align="center"><img src="../outputs.png" style="width: 800px;" /></p>
+
+**Pipeline Statistics**
+
+You can view the statistics (cost, token usage and latency) of the run with
+
+```python
+print(pipeline.statistics)
+```
+
+<p align="center"><img src="../statistics.png" style="width: 800px;" /></p>
 
 ## Next Steps
 
-Superpipe is designed to get you started without having to learn too much. You've already been introduced to the core concepts in Superpipe - steps and pipelines.
+[**Concepts**](/superpipe/concepts) &mdash; to understand the core concepts behind Superpipe.
 
-TODO
+[**Why Superpipe?**](/superpipe/why) &mdash; to understand whether Superpipe is right for you.
+
+[**Examples**](/superpipe/examples) &mdash; for more advanced examples and usage.
