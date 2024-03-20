@@ -22,7 +22,7 @@ To properly evaluate your extraction/classification pipelines, you need <u>_high
 
 You can get pretty far by optimizing your prompts, trying smaller models, or changing various parameters of your pipeline. However, optimizing each piece in isolation isn't enough. <u>_Pipelines need to be optimized end-to-end_</u>.
 
-**Problem 3: You need to monitor my pipeline in production and improve it over time**
+**Problem 3: You need to monitor your pipeline in production and improve it over time**
 
 Once your pipeline is serving production traffic, you still need to know how it's doing. Data and models drift over time. As cheaper, faster and better models come out, you need to easily try them and swap them out when it makes sense.
 
@@ -30,21 +30,29 @@ Once your pipeline is serving production traffic, you still need to know how it'
 
 Superpipe helps you build & generate labeled data, then evaluate and optimize your pipeline.
 
-**Build your pipeline**
+**Step 1: Build your pipeline**
 
 Superpipe makes it easy to build extraction and classification pipelines. You can also use langchain, LlamaIndex or your favorite LLM library. Superpipe acts as the glue between components and leaves you fully in control of the logic.
 
 One of our [principles](/superpipe/principles) is to <u>_abstract the boilerplate, not the logic_</u>. Using superpipe to build your pipeline, however, makes the following steps easier.
 
-**Generate labeled data**
+**Step 2: Generate labeled data**
 
-If you already have high-quality labeled data, you can skip this step. If not, you can use your superpipe pipeline to create <u>_candidate labels_</u>. If you use a powerful model combined with powerful techniques you can generate reasonably accurate labels.
+Use your superpipe pipeline to create <u>_candidate labels_</u>. If you use a powerful model combined with powerful techniques you can generate reasonably accurate labels. Then you can manually inspect these labels with [Superpipe Studio](/superpipe/studio) and fix the wrong ones.
 
-Then you can manually inspect these labels with [Superpipe Studio](/superpipe/studio) and fix the wrong ones.
+This is an important and often overlooked step. <u>_Without labeled data you can't evaluate your pipeline._</u>
 
-**Evaluate your pipeline**
+**Step 3: Evaluate your pipeline**
 
-**Optimize your pipeline**
+Usually the powerful models/techniques are too expensive or slow for production. Armed with labeled data, you can evaluate cheaper and faster pipelines. You may want to combine open-source models with more complex techniques (like multi-step prompting, chain-of-though, etc.).
+
+<u>_You may want to try multiple approaches and compare them on accuracy, cost and speed._</u>
+
+**Step 4: Optimize your pipeline**
+
+**Step 5: Deploy, monitor and further optimize**
+
+<p align="center"><img src="./overview.png" style="width: 1000px;" /></p>
 
 <hr>
 
