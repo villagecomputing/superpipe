@@ -4,6 +4,7 @@ import os
 import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
+from superpipe.util import df_apply_gradients
 
 
 class GridSearch:
@@ -69,7 +70,7 @@ class GridSearch:
         """
         return {f"{step}__{param}": value for step, params in params_dict.items() for param, value in params.items()}
 
-    def run(self, df: pd.DataFrame, output_dir=None, verbose=False):
+    def run(self, df: pd.DataFrame, output_dir=None, verbose=False, styled=True):
         """
         Applies the grid search on a given DataFrame and optionally saves the results to CSV files.
 
@@ -110,48 +111,8 @@ class GridSearch:
         self.results = pd.DataFrame(results)
         self._update_best()
 
-        def _gradient_color(val, min_val, median_val, max_val, reverse=False):
-            if pd.isna(val):
-                return 'background-color: white; color: black'  # Handle NaN values
-
-            # Ensure denominator is not zero before division to avoid NaN results
-            if min_val != median_val and median_val != max_val:
-                if val < median_val:
-                    closeness = (val - min_val) / (median_val - min_val)
-                    red = 255 if not reverse else int(closeness * 255)
-                    green = int(closeness * 255) if not reverse else 255
-                    color = f'rgb({red},{green},0)'
-                else:
-                    closeness = (val - median_val) / (max_val - median_val)
-                    green = 255 if not reverse else int((1 - closeness) * 255)
-                    red = int((1 - closeness) * 255) if not reverse else 255
-                    color = f'rgb({red},{green},0)'
-            else:
-                # Fallback color if unable to calculate closeness due to equal min, median, and max values
-                color = 'rgb(255,255,0)' if not reverse else 'rgb(0,255,255)'
-
-            return f'background-color: {color}; color: black;'  
-
-        def _apply_gradients(df, higher_columns, lower_columns):
-            # Calculate min, median, and max for each column and store in a dictionary
-            styles = {col: {'min_val': df[col].min(), 'median_val': df[col].median(), 'max_val': df[col].max(), 'reverse': col in lower_columns} for col in higher_columns + lower_columns}
-            
-            def apply_style(val, col):
-                # Directly pass the values without unpacking
-                info = styles[col]
-                return _gradient_color(val, info['min_val'], info['median_val'], info['max_val'], reverse=info['reverse'])
-            
-            styler = df.style
-            for col in styles:
-                styler = styler.applymap(lambda val, col=col: apply_style(val, col), subset=[col])
-            return styler
-
-        # Specify the columns you want to apply the gradient to
-        higher_columns = ['score']
-        lower_columns = ['input_cost', 'output_cost', 'total_latency']
-
-        # Apply the gradient function to the specified columns
-        styled_df = _apply_gradients(self.results, higher_columns, lower_columns)
-
-        # Display the styled DataFrame in a Jupyter notebook
-        return styled_df
+        if styled:
+            higher_columns = ['score']
+            lower_columns = ['input_cost', 'output_cost', 'total_latency']
+            return df_apply_gradients(self.results, higher_columns, lower_columns)
+        return self.results
