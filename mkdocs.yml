@@ -17,6 +17,20 @@ theme:
     - navigation.path
     - navigation.indexes
     - navigation.footer
+    - search.suggest
+    - search.highlight
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 nav:
   - Introduction:
@@ -45,7 +59,7 @@ nav:
       - examples/business_classification/business_classification.ipynb
       - examples/comparing_pipelines/furniture.ipynb
       - examples/generative_output/jokes.ipynb
-      
+
   - Studio:
       - studio/index.md
   - test: index.md
@@ -92,7 +106,8 @@ markdown_extensions:
       permalink: true
 
 plugins:
-    - mkdocs-jupyter
+  - mkdocs-jupyter
+  - search
 
 social:
   - icon: fontawesome/brands/twitter
