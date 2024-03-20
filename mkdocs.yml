@@ -62,7 +62,6 @@ nav:
 
   - Studio:
       - studio/index.md
-  - test: index.md
 
 markdown_extensions:
   - admonition
