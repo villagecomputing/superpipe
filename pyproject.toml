@@ -26,6 +26,7 @@ ipykernel = "^6.29.2"
 tqdm = "^4.66.2"
 mkdocs-material = "^9.5.13"
 pymdown-extensions = "^10.7.1"
+mkdocs-jupyter = "^0.24.6"
 
 [build-system]
 requires = ["poetry-core"]
