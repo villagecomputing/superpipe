@@ -33,7 +33,7 @@ Once you've built your pipeline it's time to see how well it works. This require
 
 ### Optimize
 
-The last step in using Superpipe is trying out many permutations of step paramaters to optimize your pipeline along **cost, accuracy, and speed**.
+The last step in using Superpipe is trying out many permutations of step parameters to optimize your pipeline along **cost, accuracy, and speed**.
 
 For example, you may want to try:
 
@@ -42,7 +42,7 @@ For example, you may want to try:
 - Chain of thought vs. direct prompting
 - Few shot prompts
 
-One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every paramater permutation is trivial.
+One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every parameter permutation is trivial.
 
 Pipeline optimization is done via a [grid search](../concepts/grid_search).
 
@@ -56,6 +56,6 @@ A common usecase of Superpipe is understanding if you can "get away" with using 
 - Test your pipeline and generate _candidate ground truth_
 - Manually inspect and correct your ground truth
 - Define an evaluation function
-- Define a grid search paramater dictionary
+- Define a grid search parameter dictionary
 - Run a grid search
 - ...profit

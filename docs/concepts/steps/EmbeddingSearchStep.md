@@ -8,7 +8,7 @@ In either case, the candidates will be embedded and saved to an in memory vector
 
 The `k` value determines the number of embeddings returned and is often a parameter you may want to permute in a grid search.
 
-For best results, it is best to provide a `search_prompt` that is dense with identifying infromation about the category.
+For best results, it is best to provide a `search_prompt` that is dense with identifying information about the category.
 
 ## Example
 
