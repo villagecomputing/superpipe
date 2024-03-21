@@ -1,6 +1,7 @@
 from typing import Callable, Union, Dict, TypeVar, Generic
 import pandas as pd
 from pydantic import BaseModel
+from openai.types.chat.completion_create_params import CompletionCreateParamsNonStreaming
 from superpipe.llm import get_structured_llm_response, StructuredLLMResponse
 from superpipe.pydantic import describe_pydantic_model
 from superpipe.steps.llm_step import LLMStep, StepResult
@@ -36,6 +37,7 @@ class LLMStructuredStep(LLMStep, Generic[T]):
             model: str,
             prompt: Callable[[Union[Dict, pd.Series]], str],
             out_schema: T,
+            openai_args: CompletionCreateParamsNonStreaming = {},
             name: str = None):
         """
         Initializes a new instance of the LLMStructuredStep class.
@@ -46,7 +48,7 @@ class LLMStructuredStep(LLMStep, Generic[T]):
             out_schema (T): The Pydantic model that defines the expected structure of the LLM's response.
             name (str, optional): The name of the step. Defaults to None.
         """
-        super().__init__(model, prompt, name)
+        super().__init__(model, prompt, openai_args, name)
         self.out_schema = out_schema
 
     def _compile_structured_prompt(self, input: dict):
@@ -79,8 +81,10 @@ class LLMStructuredStep(LLMStep, Generic[T]):
         model = self.model
         fields = self.out_schema.model_fields.keys()
         compiled_prompt = self._compile_structured_prompt(row)
+        openai_args = self.openai_args
         try:
-            response = get_structured_llm_response(compiled_prompt, model)
+            response = get_structured_llm_response(
+                compiled_prompt, model, openai_args)
         except Exception as e:
             # TODO: need better error logging here include stacktrace
             response = StructuredLLMResponse(

@@ -1,6 +1,7 @@
 from typing import Callable, Union, Dict, TypeVar, Generic
 import pandas as pd
 from pydantic import BaseModel
+from openai.types.chat.completion_create_params import CompletionCreateParamsNonStreaming
 from superpipe.llm import (
     get_structured_llm_response,
     StructuredLLMResponse,
@@ -27,6 +28,7 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
             prompt: Callable[[Union[Dict, pd.Series]], str],
             out_schema: T,
             structured_model: str = gpt35,
+            openai_args: CompletionCreateParamsNonStreaming = {},
             name: str = None):
         """
         A pipeline step that uses a structured and an unstructured language model to process data.
@@ -39,7 +41,7 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
             structured_model (str): Identifier for the structured LLM. Defaults to gpt35.
             name (str, optional): Name of the step.
         """
-        super().__init__(model, prompt, name)
+        super().__init__(model, prompt, openai_args, name)
         self.structured_model = structured_model
         self.out_schema = out_schema
 
@@ -65,15 +67,16 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
         model = self.model
         prompt = self.prompt
         structured_model = self.structured_model
+        openai_args = self.openai_args
         fields = self.out_schema.model_fields.keys()
         compiled_prompt = prompt(row)
         try:
-            response = get_llm_response(compiled_prompt, model)
+            response = get_llm_response(compiled_prompt, model, openai_args)
             if response.success:
                 compiled_prompt = self._compile_structured_prompt(
                     response.content)
                 response = get_structured_llm_response(
-                    compiled_prompt, structured_model)
+                    compiled_prompt, structured_model, openai_args)
             else:
                 response = StructuredLLMResponse(
                     success=False, error=response.error, latency=0)
