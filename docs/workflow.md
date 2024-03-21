@@ -21,8 +21,8 @@ Before you can start using Superpipe you need:
 
 With that in hand, you will use Superpipe to build:
 
-- **[Steps](./steps/)** - each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
-- **[Pipeline](./pipelines.md)** - steps are chained together to create a pipeline.
+- **[Steps](../concepts/steps/)** - each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
+- **[Pipeline](../concepts/pipelines)** - steps are chained together to create a pipeline.
 
 ### Evaluate
 
@@ -44,15 +44,15 @@ For example, you may want to try:
 
 One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every paramater permutation is trivial.
 
-Pipeline optimization is done via a [grid search](./grid_search.md).
+Pipeline optimization is done via a [grid search](../concepts/grid_search).
 
-A common usecase of Superpipe is understanding if you can "get away" with using an open source model. See the [models](./models.md) to learn how to use Superpipe with any LLM model from any provider.
+A common usecase of Superpipe is understanding if you can "get away" with using an open source model. See the [models](../concepts/models) to learn how to use Superpipe with any LLM model from any provider.
 
 ## The Superpipe process
 
 - Read in your data
-- Define your [steps](./steps/)
-- Combine steps and eval function into a [pipeline](./pipelines.md)
+- Define your [steps](../concepts/steps)
+- Combine steps and eval function into a [pipeline](../concepts/pipelines)
 - Test your pipeline and generate _candidate ground truth_
 - Manually inspect and correct your ground truth
 - Define an evaluation function
