@@ -2,6 +2,7 @@ from typing import Callable, Union, Dict
 import pandas as pd
 from superpipe.steps.step import Step, StepResult, StepRowStatistics
 from superpipe.llm import get_llm_response, LLMResponse
+from openai.types.chat.completion_create_params import CompletionCreateParamsNonStreaming
 
 
 class LLMStep(Step):
@@ -13,12 +14,15 @@ class LLMStep(Step):
     Attributes:
         model (str): The identifier of the LLM to be used.
         prompt (Callable[[Union[Dict, pd.Series]], str]): A function that takes input data and returns a prompt string.
+        openai_args (CompletionCreateParamsNonStreaming): Additional arguments to pass to the OpenAI API.
+        name (str, optional): The name of the step. Defaults to None.
     """
 
     def __init__(
             self,
             model: str,
             prompt: Callable[[Union[Dict, pd.Series]], str],
+            openai_args: CompletionCreateParamsNonStreaming = {},
             name: str = None):
         """
         Initializes a new instance of the LLMStep class.
@@ -31,6 +35,7 @@ class LLMStep(Step):
         super().__init__(name)
         self.model = model
         self.prompt = prompt
+        self.openai_args = openai_args
 
     def _get_row_statistics(self, response: LLMResponse):
         """
@@ -62,8 +67,9 @@ class LLMStep(Step):
         """
         model = self.model
         compiled_prompt = self.prompt(row)
+        openai_args = self.openai_args
         try:
-            response = get_llm_response(compiled_prompt, model)
+            response = get_llm_response(compiled_prompt, model, openai_args)
         except Exception as e:
             # TODO: need better error logging here include stacktrace
             response = LLMResponse(

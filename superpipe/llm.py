@@ -1,6 +1,7 @@
 import time
 import json
 from pydantic import BaseModel
+from openai.types.chat.completion_create_params import CompletionCreateParamsNonStreaming
 from superpipe.models import gpt35, get_cost
 from superpipe.openai import get_client
 
@@ -20,7 +21,10 @@ class StructuredLLMResponse(LLMResponse):
     content: dict = {}
 
 
-def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
+def get_llm_response(
+        prompt: str,
+        model=gpt35,
+        args: CompletionCreateParamsNonStreaming = {}) -> LLMResponse:
     response = LLMResponse()
     res = None
     client = get_client(model)
@@ -30,7 +34,8 @@ def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
         start_time = time.perf_counter()
         res = client.chat.completions.create(
             model=model,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            **args
         )
         end_time = time.perf_counter()
         response.latency = end_time - start_time
@@ -46,7 +51,10 @@ def get_llm_response(prompt: str, model=gpt35) -> LLMResponse:
     return response
 
 
-def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMResponse:
+def get_structured_llm_response(
+        prompt: str,
+        model=gpt35,
+        args: CompletionCreateParamsNonStreaming = {}) -> StructuredLLMResponse:
     """
     Sends a prompt to a specified language model and returns a structured response.
 
@@ -86,7 +94,8 @@ def get_structured_llm_response(prompt: str, model=gpt35) -> StructuredLLMRespon
                 {"role": "system",
                  "content": "You are a helpful assistant designed to output JSON."},
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            **args
         )
         end_time = time.perf_counter()
         response.latency = end_time - start_time
