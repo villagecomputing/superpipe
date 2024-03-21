@@ -41,7 +41,7 @@ Once you've built your pipeline it's time to see how well it works. This require
 
 ### Optimize
 
-The last step in using Superpipe is trying out many permutations of step paramaters to optimize your pipeline along **cost, accuracy, and speed**.
+The last step in using Superpipe is trying out many combinations of parameters to optimize your pipeline along **cost, accuracy, and speed**.
 
 For example, you may want to try:
 
@@ -50,7 +50,7 @@ For example, you may want to try:
 - Chain of thought vs. direct prompting
 - Few shot prompts
 
-One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every paramater permutation is trivial.
+One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every parameter combination is trivial.
 
 Pipeline optimization is done via a [grid search](../concepts/grid_search).
 
@@ -85,5 +85,7 @@ Superpipe is useful for any data labeling, extraction, classification, or taggin
 [**Concepts**](./concepts) &mdash; to understand the core concepts behind Superpipe.
 
 [**Why Superpipe?**](./why) &mdash; to understand whether Superpipe is right for you.
+
+[**Workflow**](./workflow) &mdash; to understand the full workflow we suggest for building pipelines.
 
 [**Examples**](./examples) &mdash; for more advanced examples and usage.
