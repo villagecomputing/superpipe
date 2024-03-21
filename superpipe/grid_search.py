@@ -5,6 +5,7 @@ import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
 from superpipe.util import df_apply_gradients
+from tqdm import tqdm
 
 
 class GridSearch:
@@ -64,6 +65,18 @@ class GridSearch:
                 nested_best_params[step][param] = value
             self.best_params = nested_best_params
 
+    def _hash_params(params: Dict) -> str:
+        """
+        Hashes a dictionary of parameters into a single string.
+        """
+        def serialize(obj):
+            """JSON serializer for objects not serializable by default json code"""
+            if callable(obj):
+                return obj.__name__  # Use function name for hashing
+            raise TypeError(
+                f"Object of type {obj.__class__.__name__} is not JSON serializable")
+        return hash(json.dumps(params, default=serialize, sort_keys=True))
+
     def _flatten_params_dict(params_dict: Dict) -> Dict:
         """
         Flattens a dictionary of parameters into a single dictionary with concatenated keys.        
@@ -82,13 +95,16 @@ class GridSearch:
             pd.DataFrame: A DataFrame containing the results of the grid search.
         """
         results = []
-        for i, params in enumerate(self.params_list):
+        n = len(self.params_list)
+        for i, params in tqdm(enumerate(self.params_list),
+                              desc="Running grid search over {n} combinations"):
             # TODO: check for duplicate params because of steps overriding global params
-            print(f"Iteration {i+1} of {len(self.params_list)}")
-            print("Params: ", params)
+            if verbose:
+                print(f"Iteration {i+1} of {n}")
+                print("Params: ", params)
             self.pipeline.update_params(params)
             df_result = self.pipeline.run(df.copy(), verbose)
-            index = hash(json.dumps(params, sort_keys=True))
+            index = GridSearch._hash_params(params)
             if output_dir is not None:
                 full_path = os.path.join(os.getcwd(), output_dir)
                 if not os.path.exists(full_path):
