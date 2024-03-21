@@ -1,14 +1,4 @@
-# Getting Started
-
-## Installation
-
-Make sure you have Python 3.10+ installed, then run
-
-```
-pip install superpipe-py
-```
-
-## Basic Usage (Build)
+# Step 1: Build
 
 Let's start with Build. We'll build a pipeline that receives a list of names of famous people and figures out their birthdays and whether they're still alive. You can also download this as a [notebook](https://github.com/villagecomputing/superpipe/tree/main/docs/examples/web_scraping/web_scraping.ipynb) on Github.
 

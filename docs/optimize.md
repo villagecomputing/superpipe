@@ -1,4 +1,4 @@
-# Optimize
+# Step 3: Optimize
 
 In progress.
 
