@@ -8,9 +8,9 @@ Make sure you have Python 3.10+ installed, then run
 pip install superpipe-py
 ```
 
-## Basic Usage
+## Basic Usage (Build)
 
-Here's how to use Superpipe to build a pipeline that receives a list of names of famous people and figures out their birthdays and whether they're still alive. You can also download this as a [notebook](https://github.com/villagecomputing/superpipe/tree/main/docs/examples/web_scraping/web_scraping.ipynb) on Github.
+Let's start with Build. We'll build a pipeline that receives a list of names of famous people and figures out their birthdays and whether they're still alive. You can also download this as a [notebook](https://github.com/villagecomputing/superpipe/tree/main/docs/examples/web_scraping/web_scraping.ipynb) on Github.
 
 First we define the input data. Although not a requirement, Superpipe works best with pandas dataframes.
 
@@ -132,8 +132,8 @@ print(pipeline.statistics)
 
 ## Next Steps
 
-[**Concepts**](../concepts) &mdash; to understand the core concepts behind Superpipe.
+[**Evaluate**](../evaluate) &mdash; to learn about evaluating your pipelines.
 
-[**Why Superpipe?**](../why) &mdash; to understand whether Superpipe is right for you.
+[**Concepts**](../concepts) &mdash; to understand the core concepts behind Superpipe.
 
 [**Examples**](../examples) &mdash; for more advanced examples and usage.

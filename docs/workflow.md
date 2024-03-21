@@ -1,61 +1,61 @@
-# Superpipe Workflow
+# Workflow
 
-## Build, eval, optimize
+_It's easier than ever to build an LLM prototype. When building LLM pipelines that are accurate, cheap and fast in production &mdash; engineers need to think like scientists. Superpipe makes this easy._
 
-There are three stages of using Superpipe.
+<hr>
 
-1. **Building** a pipeline
-2. **Evaluating** your pipeline
-3. **Optimizing** your pipeline
+## The Problem
 
-### Build
+**Problem 1: You have no idea how your pipeline will perform on real data**
 
-Any multistep LLM workflow can be converted to a Superpipe pipeline.
+To properly evaluate your extraction/classification pipelines, you need <u>_high-quality labeled data_</u>. It's not sufficient to evaluate on public benchmark data, you need to evaluate on <u>_your own data_</u> to reflect true accuracy.
 
-Take a look at our [concepts page](../concepts) for a better understanding of Superpipe concepts.
+**Problem 2: You need to optimize your pipeline end-to-end across accuracy, cost and speed**
 
-Before you can start using Superpipe you need:
+You can get pretty far by optimizing your prompts, trying smaller models, or changing various parameters of your pipeline. However, optimizing each piece in isolation isn't enough. <u>_Pipelines need to be optimized end-to-end_</u>.
 
-- **A well defined task** - Superpipe is designed well defined tasks like categorization, tagging, and extraction. You should know your goal before you get started.
-- **Input Data** - the dataset you want to transform with your pipeline. Superpipe acts over Pandas Dataframes or dictionaries.
+**Problem 3: You need to monitor your pipeline in production and improve it over time**
 
-With that in hand, you will use Superpipe to build:
+Once your pipeline is serving production traffic, you still need to know how it's doing. Data and models drift over time. As cheaper, faster and better models come out, you need to easily try them and swap them out when it makes sense.
 
-- **[Steps](../concepts/steps/)** - each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
-- **[Pipeline](../concepts/pipelines)** - steps are chained together to create a pipeline.
+## The Solution
 
-### Evaluate
+Superpipe helps you solve these problems by simplifying the following workflow:
 
-Once you've built your pipeline it's time to see how well it works. This requires:
+**Step 1: Build your pipeline**
 
-- **Evaluation function** - a function that defines what "correct" is. In many cases this is a string comparison with your ground truth labels but could be any arbitrary function, including a call to an LLM to evaluate generative outputs.
-- **Ground truth labels** - the _correct_ label for each row in your data. You can use an early version of your pipeline to generate _candidate labels_ and manually inspect and correct to generate your ground truth.
+Superpipe makes it easy to build extraction and classification pipelines. You can also use langchain, LlamaIndex or your favorite LLM library. Superpipe acts as the glue between components and leaves you fully in control of the logic.
 
-### Optimize
+One of our [principles](./principles) is to <u>_abstract the boilerplate, not the logic_</u>. Using superpipe to build your pipeline, however, makes the following steps easier.
 
-The last step in using Superpipe is trying out many permutations of step parameters to optimize your pipeline along **cost, accuracy, and speed**.
+**Step 2: Generate labeled data**
 
-For example, you may want to try:
+Use your superpipe pipeline to create <u>_candidate labels_</u>. If you use a powerful model combined with powerful techniques you can generate reasonably accurate labels. Then you can manually inspect these labels with [Superpipe Studio](./studio) and fix the wrong ones. This is an important and often overlooked step. Without labeled data you can't evaluate your pipeline and without evaluation you're flying blind.
 
-- GPT-4 vs. Mixtral
-- 3, 5, 7 retrieval chunks
-- Chain of thought vs. direct prompting
-- Few shot prompts
+**Step 3: Evaluate your pipeline**
 
-One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every parameter permutation is trivial.
+Armed with labeled data, you can build and evaluate cheaper and faster pipelines. You may want to combine open-source models with more complex techniques (like multi-step prompting, chain-of-though, etc.). You may want to iterate between Steps 1 & 3 by trying multiple approaches and comparing them on accuracy, cost and speed.
 
-Pipeline optimization is done via a [grid search](../concepts/grid_search).
+**Step 4: Optimize your pipeline**
 
-A common usecase of Superpipe is understanding if you can "get away" with using an open source model. See the [models](../concepts/models) to learn how to use Superpipe with any LLM model from any provider.
+A pipeline usually has many parameters - foundation models, prompts, structured outputs, k-values, etc. Superpipe lets you easily find the best combination of parameters by running a [grid search](./using/grid_search) over the parameter space. You can compare different approaches against each other and track your experiments with [Studio](./studio).
 
-## The Superpipe process
+**Step 5: Deploy, monitor and further optimize**
 
-- Read in your data
-- Define your [steps](../concepts/steps)
-- Combine steps and eval function into a [pipeline](../concepts/pipelines)
-- Test your pipeline and generate _candidate ground truth_
-- Manually inspect and correct your ground truth
-- Define an evaluation function
-- Define a grid search parameter dictionary
-- Run a grid search
-- ...profit
+Once you've deployed the winning pipeline to production, [Studio](./studio) helps monitor the accuracy, cost and speed of the pipeline. It helps you run auto-evaluations on a sub-sample of production data to make sure model drift or data drift aren't hurting. It also lets you easily backtest the newest models and techniques and compare them to production.
+
+<br>
+<p align="center"><b>The 5-step Superpipe workflow</b></p>
+<p align="center"><img src="../assets/overview.png" style="width: 800px;" /></p>
+
+<hr>
+
+While there are a number of general-purpose LLM libraries focused on different aspects of the above, Superpipe focuses on a specific problem (data extraction and classification) and the optimal workflow for the problem. It is designed with the following goals in mind:
+
+!!! note "Superpipe design goals"
+
+    - **Simplicity**: easy to get started because there few abstractions to learn.
+    - **Unopinionated**: acts as connective tissue and abstracts boilerplate but leaves you in control of logic.
+    - **Works with datasets**: works natively with `pandas` dataframes so you can evaluate and optimize over datasets.
+    - **Parametric**: every aspect of the pipeline is exposed as a parameter, you can easily try different models or run hyperparameter searches.
+    - **Plays well with others**: use your favorite LLM library or tool, including langchain, LlamaIndex, DSpy, etc.
