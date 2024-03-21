@@ -100,5 +100,5 @@ class LLMStructuredStep(LLMStep, Generic[T]):
                     print(
                         f"Step {self.name}: Missing field {field} in response {content}")
                 val = content.get(field)
-                result[field] = val or ""
+                result[field] = val if val is not None else ""
         return StepResult(fields=result, statistics=statistics)
