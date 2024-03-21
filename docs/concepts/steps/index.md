@@ -13,4 +13,4 @@ Superpipe comes with a handful of built-in steps that you can use to build your 
 
 ## Custom Steps
 
-It's easy (and recommended) to create your own steps by subclassing [Custom Step](./CustomStep.md). This allows you to do pretty much anything inside a step - call a third party api, lookup a DB, etc.
+It's easy (and recommended) to create your own steps using [Custom Step](./CustomStep.md). This allows you to do pretty much anything inside a step - call a third party api, lookup a DB, etc.

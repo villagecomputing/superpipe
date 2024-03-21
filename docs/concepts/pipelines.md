@@ -14,7 +14,7 @@ A pipeline object has associated pipeline statistics.
 | input_cost    | Total input cost of the pipeline split out by model.                   |
 | output_cost   | Total output cost of the pipeline split out by model.                  |
 | num_success   | Number of successful rows.                                             |
-| num_failure   | Number of unsuccesful rows.                                            |
+| num_failure   | Number of unsuccessful rows.                                            |
 | total_latency | Total latency of the pipeline.                                         |
 
 ## Pipeline methods
