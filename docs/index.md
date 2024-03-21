@@ -6,15 +6,23 @@ _A lightweight framework to build, evaluate and optimize LLM pipelines for struc
 
 <hr>
 
+## Installation
+
+Make sure you have Python 3.10+ installed, then run
+
+```
+pip install superpipe-py
+```
+
 ## Build, eval, optimize
 
 There are three stages of using Superpipe.
 
-1. **Build** &mdash; use your favorite LLM library (langchain, LlamaIndex) and combine with Superpipe's building blocks.
-2. **Evaluate** &mdash; your pipeline needs to be evaluated on _your_ data. Your data and use case are unique, so benchmarks are insufficient.
-3. **Optimize** &mdash; build once, experiment many times. Easily try different models, prompts, and parameters to optimize end-to-end.
+1. [**Build**](./build) &mdash; use your favorite LLM library (langchain, LlamaIndex) and combine with Superpipe's building blocks.
+2. [**Evaluate**](./evaluate) &mdash; your pipeline needs to be evaluated on _your_ data. Your data and use case are unique, so benchmarks are insufficient.
+3. [**Optimize**](./optimize) &mdash; build once, experiment many times. Easily try different models, prompts, and parameters to optimize end-to-end.
 
-**To see the code, keep reading. If you're ready to give Superpipe a try, visit [Getting Started](./start)**
+**To see the code, keep reading. If you're ready to give Superpipe a try, visit [Step 1: Build](./build)**
 
 ### Build
 
@@ -80,7 +88,7 @@ Superpipe is useful for any data labeling, extraction, classification, or taggin
 
 ## Next Steps
 
-[**Getting Started**](./start) &mdash; for installation and basic usage examples.
+[**Step 1: Build**](./build) &mdash; to get started building with Superpipe.
 
 [**Concepts**](./concepts) &mdash; to understand the core concepts behind Superpipe.
 
