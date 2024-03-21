@@ -1,10 +1,12 @@
 # Why Superpipe?
 
+<p align="center"><img src="../assets/superpipe_venn.png" style="width: 400px;" /></p>
+
 There are several great tools that help you chain together LLM calls or build agent workflows that make for great prototypes or demos. Superpipe is different for two reasons:
 
-**It focuses exclusively on unstructured -> structured (extraction and classification) problems.** Though it can be used for generative use cases, that is not where it shines.
+**Focuses exclusively on unstructured -> structured (eg. extraction, classification) problems.** Though it can be used for generative use cases, that is not where it shines.
 
-**It helps you evaluate and optimize across accuracy, speed and cost.** Accuracy, speed and cost don't matter for prototypes and demos, but they do when you're trying to solve real problems for real customers at scale.
+**Focuses on evaluating and optimizing across accuracy, speed and cost.** Accuracy, speed and cost don't matter for prototypes and demos, but they do when you're trying to solve real problems for real customers at scale.
 
 Superpipe does not pretend to do everything, it does a few things and does them well.
 
