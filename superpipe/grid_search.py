@@ -81,7 +81,11 @@ class GridSearch:
         """
         Flattens a dictionary of parameters into a single dictionary with concatenated keys.        
         """
-        return {f"{step}__{param}": value for step, params in params_dict.items() for param, value in params.items()}
+        def value_to_string(value):
+            return value.__name__ if callable(value) else str(value)
+        return {f"{step}__{param}": value_to_string(value)
+                for step, params in params_dict.items()
+                for param, value in params.items()}
 
     def run(self, df: pd.DataFrame, output_dir=None, verbose=False, styled=True):
         """
@@ -97,7 +101,7 @@ class GridSearch:
         results = []
         n = len(self.params_list)
         for i, params in tqdm(enumerate(self.params_list),
-                              desc="Running grid search over {n} combinations"):
+                              desc=f"Running grid search over {n} combinations"):
             # TODO: check for duplicate params because of steps overriding global params
             if verbose:
                 print(f"Iteration {i+1} of {n}")
