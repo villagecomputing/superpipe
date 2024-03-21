@@ -42,23 +42,24 @@ nav:
       - principles.md
       - roadmap.md
   - Concepts:
-      - using/index.md
-      - Pipelines: using/pipelines.md
-      - Models: using/models.md
-      - Grid Search: using/grid_search.md
+      - concepts/index.md
       - Steps:
-          - using/steps/index.md
-          - using/steps/LLMStep.md
-          - using/steps/LLMStructuredStep.md
-          - using/steps/SERPStep.md
-          - using/steps/EmbeddingSearchStep.md
-          - using/steps/CustomStep.md
+          - concepts/steps/index.md
+          - concepts/steps/LLMStep.md
+          - concepts/steps/LLMStructuredStep.md
+          - concepts/steps/SERPStep.md
+          - concepts/steps/EmbeddingSearchStep.md
+          - concepts/steps/CustomStep.md
+      - Pipelines: concepts/pipelines.md
+      - Models: concepts/models.md
+      - Grid Search: concepts/grid_search.md
   - Examples:
       - examples/index.md
+      - examples/web_scraping/web_scraping.ipynb
       - examples/product_categorization/product_categorization.ipynb
       - examples/business_classification/business_classification.ipynb
       - examples/comparing_pipelines/furniture.ipynb
-      - examples/generative_output/jokes.ipynb
+      - examples/custom_eval/jokes.ipynb
 
   - Studio:
       - studio/index.md
@@ -105,7 +106,8 @@ markdown_extensions:
       permalink: true
 
 plugins:
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      include_source: True
   - search
 
 social:

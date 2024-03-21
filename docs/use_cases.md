@@ -20,10 +20,16 @@ Extract filter arguments from natural language search queries.
 
 ### Product Categorization
 
-Categorize
+Categorize your product catalog into your custom taxonomy to power search, filtering and merchandising.
 
 ### Sentiment analysis
 
-### Business classification
+Analyze sentiment of customer reviews, customer support interactions and flag important themes.
+
+### Customer & Business classification
+
+Classify your customers or businesses into government classification codes (NAICS/SIC) or your custom internal categories.
 
 ### Content moderation
+
+Detect harmful or policy-violating content.

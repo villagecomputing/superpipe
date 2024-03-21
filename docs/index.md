@@ -8,7 +8,7 @@ _A lightweight framework to build, evaluate and optimize LLM-based pipelines for
 
 Superpipe helps developers build multi-step LLM pipelines, then evaluate and optimize them to find the right trade-off between **accuracy, cost, and speed**. It also helps deploy, monitor and improve them over time by easily testing new models or fine-tuning a custom model.
 
-See [Getting Started](/superpipe/start) or read on to see if Superpipe is right for you.
+See [Getting Started](./start) or read on to see if Superpipe is right for you.
 
 ## The Problem
 
@@ -34,11 +34,11 @@ Superpipe helps you build & generate labeled data, then evaluate and optimize yo
 
 Superpipe makes it easy to build extraction and classification pipelines. You can also use langchain, LlamaIndex or your favorite LLM library. Superpipe acts as the glue between components and leaves you fully in control of the logic.
 
-One of our [principles](/superpipe/principles) is to <u>_abstract the boilerplate, not the logic_</u>. Using superpipe to build your pipeline, however, makes the following steps easier.
+One of our [principles](./principles) is to <u>_abstract the boilerplate, not the logic_</u>. Using superpipe to build your pipeline, however, makes the following steps easier.
 
 **Step 2: Generate labeled data**
 
-Use your superpipe pipeline to create <u>_candidate labels_</u>. If you use a powerful model combined with powerful techniques you can generate reasonably accurate labels. Then you can manually inspect these labels with [Superpipe Studio](/superpipe/studio) and fix the wrong ones. This is an important and often overlooked step. Without labeled data you can't evaluate your pipeline and without evaluation you're flying blind.
+Use your superpipe pipeline to create <u>_candidate labels_</u>. If you use a powerful model combined with powerful techniques you can generate reasonably accurate labels. Then you can manually inspect these labels with [Superpipe Studio](./studio) and fix the wrong ones. This is an important and often overlooked step. Without labeled data you can't evaluate your pipeline and without evaluation you're flying blind.
 
 **Step 3: Evaluate your pipeline**
 
@@ -46,11 +46,11 @@ Armed with labeled data, you can build and evaluate cheaper and faster pipelines
 
 **Step 4: Optimize your pipeline**
 
-A pipeline usually has many parameters - foundation models, prompts, structured outputs, k-values, etc. Superpipe lets you easily find the best combination of parameters by running a [grid search](/) over the parameter space. You can compare different approaches against each other and track your experiments with [Studio](/superpipe/studio).
+A pipeline usually has many parameters - foundation models, prompts, structured outputs, k-values, etc. Superpipe lets you easily find the best combination of parameters by running a [grid search](./using/grid_search) over the parameter space. You can compare different approaches against each other and track your experiments with [Studio](./studio).
 
 **Step 5: Deploy, monitor and further optimize**
 
-Once you've deployed the winning pipeline to production, [Studio](/superpipe/studio) helps monitor the accuracy, cost and speed of the pipeline. It helps you run auto-evaluations on a sub-sample of production data to make sure model drift or data drift aren't hurting. It also lets you easily backtest the newest models and techniques and compare them to production.
+Once you've deployed the winning pipeline to production, [Studio](./studio) helps monitor the accuracy, cost and speed of the pipeline. It helps you run auto-evaluations on a sub-sample of production data to make sure model drift or data drift aren't hurting. It also lets you easily backtest the newest models and techniques and compare them to production.
 
 <br>
 <p align="center"><b>The 5-step Superpipe workflow</b></p>
@@ -70,10 +70,10 @@ While there are a number of general-purpose LLM libraries focused on different a
 
 ## Next Steps
 
-[**Getting Started**](/superpipe/start) &mdash; for installation and basic usage examples.
+[**Getting Started**](./start) &mdash; for installation and basic usage examples.
 
-[**Concepts**](/superpipe/concepts) &mdash; to understand the core concepts behind Superpipe.
+[**Concepts**](./concepts) &mdash; to understand the core concepts behind Superpipe.
 
-[**Why Superpipe?**](/superpipe/why) &mdash; to understand whether Superpipe is right for you.
+[**Why Superpipe?**](./why) &mdash; to understand whether Superpipe is right for you.
 
-[**Examples**](/superpipe/examples) &mdash; for more advanced examples and usage.
+[**Examples**](./examples) &mdash; for more advanced examples and usage.
