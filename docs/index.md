@@ -1,6 +1,6 @@
 # Superpipe - optimized LLM pipelines for structured data
 
-_A lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate your pipelines on your own data and easily optimize models, prompts and other parameters for the best accuracy, cost, and speed._
+_A lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate pipelines on your own data and optimize models, prompts and other parameters for the best accuracy, cost, and speed._
 
 <p align="center"><img src="./assets/grid_search.gif" style="width: 600px;" /></p>
 
@@ -14,7 +14,7 @@ Make sure you have Python 3.10+ installed, then run
 pip install superpipe-py
 ```
 
-## Build, eval, optimize
+## Build, evaluate, optimize
 
 There are three stages of using Superpipe.
 
@@ -22,69 +22,149 @@ There are three stages of using Superpipe.
 2. [**Evaluate**](./evaluate) &mdash; your pipeline needs to be evaluated on _your_ data. Your data and use case are unique, so benchmarks are insufficient.
 3. [**Optimize**](./optimize) &mdash; build once, experiment many times. Easily try different models, prompts, and parameters to optimize end-to-end.
 
-**To see the code, keep reading. If you're ready to give Superpipe a try, visit [Step 1: Build](./build)**
+**To see a toy example, keep reading. For more details go to [Step 1: Build](./build)**
 
 ### Build
 
-Any multistep LLM workflow can be converted to a Superpipe pipeline.
+In this toy example, we'll use Superpipe to classify someone's work history into job departments. A superpipe pipeline consists of one or more [steps](./concepts/steps/). Each step takes in an input dataframe or dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
 
-Take a look at our [concepts page](../concepts) for a better understanding of Superpipe concepts.
+Below, we use a built-in Superpipe step: [`LLMStructuredStep`](./concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic]() model.
 
-Before you can start using Superpipe you need:
+```python
+from superpipe.steps import LLMStructuredStep
+from superpipe.models import gpt35
+from pydantic import BaseModel, Field
 
-- **A well defined task** - Superpipe is designed well defined tasks like categorization, tagging, and extraction. You should know your goal before you get started.
-- **Input Data** - the dataset you want to transform with your pipeline. Superpipe acts over Pandas Dataframes or dictionaries.
+work_history = "Software engineer at Tech Innovations, project manager at Creative Solutions, CTO at Startup Dreams."
+input = {"work_history": work_history}
 
-With that in hand, you will use Superpipe to build:
+def current_job_prompt(row):
+  return f"""Given an employees work history, classify them into one of the following departments:
+  HR, Legal, Finance, Sales, Product, Founder, Engineering
+  {row['work_history']}"""
 
-- **[Steps](../concepts/steps/)** - each step takes in an input dataframe or Python dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
-- **[Pipeline](../concepts/pipelines)** - steps are chained together to create a pipeline.
+class Department(BaseModel):
+    job_department: str = Field(description="Job department")
+
+job_department_step = LLMStructuredStep(
+  model=gpt35,
+  prompt=current_job_prompt,
+  out_schema=Department,
+  name="job_department")
+
+job_department_step.run(input)
+```
+
+??? "Show output"
+
+    In addition to the input (`work_history`) and result (`job_department`), the output also contains some step metadata for the `job_department` step including token usage, cost, and latency.
+
+    ```json
+    {
+      "work_history": "Software engineer at Tech Innovations, project manager at Creative Solutions, CTO at Startup Dreams.",
+      "__job_department__": {
+        "input_tokens": 97,
+        "output_tokens": 10,
+        "input_cost": 0.0000485,
+        "output_cost": 0.000015,
+        "success": true,
+        "error": null,
+        "latency": 0.9502187501639128,
+        "content": {
+          "job_department": "Engineering"
+        }
+      },
+      "job_department": "Engineering"
+    }
+    ```
 
 ### Evaluate
 
 Once you've built your pipeline it's time to see how well it works. This requires:
 
-- **Evaluation function** - a function that defines what "correct" is. In many cases this is a string comparison with your ground truth labels but could be any arbitrary function, including a call to an LLM to evaluate generative outputs.
-- **Ground truth labels** - the _correct_ label for each row in your data. You can use an early version of your pipeline to generate _candidate labels_ and manually inspect and correct to generate your ground truth.
+- **Evaluation function** - a function that defines what "correct" is. In this example we use a simple string comparison evaluation function, but in general it could be any arbitrary function, including a call to an LLM to do more advanced evals.
+- **A dataset with labels** - the _correct_ label for each row in your data. You can use an early version of your pipeline to generate _candidate labels_ and manually inspect and correct to generate your ground truth.
+
+```python
+from superpipe.pipeline import Pipeline
+import pandas as pd
+
+work_histories = [
+  "Software engineer at Tech Innovations, project manager at Creative Solutions, CTO at Startup Dreams.",
+  "Journalist for The Daily News, senior writer at Insight Magazine, currently Investor at VC Global.",
+  "Sales associate at Retail Giant, sales manager at Boutique Chain, now regional sales director at Luxury Brands Inc."
+]
+labels = [
+  "Engineering",
+  "Finance",
+  "Sales"
+]
+input = pd.DataFrame([{"work_history": work_histories[i], "label": labels[i]} for i in range(3)])
+evaluate = lambda row: row["job_department"] == row["label"]
+
+categorizer = Pipeline(
+  steps=[job_department_step],
+  evaluation_fn=evaluate)
+categorizer.run(input)
+
+print(categorizer.statistics)
+```
+
+??? "Show output"
+
+    The `score` field is calculated by applying the evaluate function on each row. In this case we were able to correctly classify each row so the score is 1 (i.e. 100%). We can also see the total cost and latency.
+
+    ```
+    +---------------+------------------------------+
+    |     score     |             1.0              |
+    +---------------+------------------------------+
+    |  input_tokens | {'gpt-3.5-turbo-0125': 1252} |
+    +---------------+------------------------------+
+    | output_tokens | {'gpt-3.5-turbo-0125': 130}  |
+    +---------------+------------------------------+
+    |   input_cost  |    $0.0006259999999999999    |
+    +---------------+------------------------------+
+    |  output_cost  |   $0.00019500000000000005    |
+    +---------------+------------------------------+
+    |  num_success  |              3               |
+    +---------------+------------------------------+
+    |  num_failure  |              0               |
+    +---------------+------------------------------+
+    | total_latency |      9.609524499624968       |
+    +---------------+------------------------------+
+    ```
 
 ### Optimize
 
-The last step in using Superpipe is trying out many combinations of parameters to optimize your pipeline along **cost, accuracy, and speed**.
+The last step in using Superpipe is trying out many combinations of parameters to optimize your pipeline along **cost, accuracy, and speed**. In this example, we'll try two different models and two prompts (4 combinations). Superpipe's [grid search](../concepts/grid_search) makes it easy to try all combinations - build once, experiment many times.
 
-For example, you may want to try:
+```python
+from superpipe.grid_search import GridSearch
+from superpipe.models import gpt35, gpt4
 
-- GPT-4 vs. Mixtral
-- 3, 5, 7 retrieval chunks
-- Chain of thought vs. direct prompting
-- Few shot prompts
+def short_job_prompt(row):
+  return f"""Classify into:  HR, Legal, Finance, Sales, Product, Founder, Engineering
+  {row['work_history']}"""
 
-One of the core principles of Superpipe is that you should build once, experiment many times. By building your pipeline in Superpipe steps, testing out every parameter combination is trivial.
+params_grid = {
+    job_department_step.name: {
+        "model": [gpt35, gpt4],
+        "prompt": [current_job_prompt, short_job_prompt]
+    },
+}
 
-Pipeline optimization is done via a [grid search](../concepts/grid_search).
+grid_search = GridSearch(categorizer, params_grid)
+grid_search.run(input)
+```
 
-A common usecase of Superpipe is understanding if you can "get away" with using an open source model. See the [models](../concepts/models) to learn how to use Superpipe with any LLM model from any provider.
+??? "Show output"
 
-## Use Cases
+    The results of the grid search show that:
 
-Superpipe is useful for any data labeling, extraction, classification, or tagging task where the output is structured and the structure is known.
+    1. The longer prompt is more accurate even though it costs more and is slower
+    2. There's no advantage in using gpt4 instead of gpt3.5
 
-### Extraction
-
-- **Document extraction** &mdash; Extract entities and facts from PDFs, emails, websites, etc.
-
-- **Product Catalog tagging** &mdash; Enrich your product catalog with AI-generated tags to power search, filtering and recommendations.
-
-- **Query analysis** &mdash; Extract filter arguments from natural language search queries.
-
-### Classification
-
-- **Product Categorization** &mdash; Categorize your product catalog into your custom taxonomy to power search, filtering and merchandising.
-
-- **Sentiment analysis** &mdash; Analyze sentiment of customer reviews, customer support interactions and flag important themes.
-
-- **Customer & Business classification** &mdash; Classify your customers or businesses into government classification codes (NAICS/SIC) or your custom internal categories.
-
-- **Content moderation** &mdash; Detect harmful or policy-violating content.
+    <p align="center"><img src="./assets/grid_search.png" style="width: 800px;" /></p>
 
 ## Next Steps
 
@@ -93,7 +173,5 @@ Superpipe is useful for any data labeling, extraction, classification, or taggin
 [**Concepts**](./concepts) &mdash; to understand the core concepts behind Superpipe.
 
 [**Why Superpipe?**](./why) &mdash; to understand whether Superpipe is right for you.
-
-[**Workflow**](./workflow) &mdash; to understand the full workflow we suggest for building pipelines.
 
 [**Examples**](./examples) &mdash; for more advanced examples and usage.
