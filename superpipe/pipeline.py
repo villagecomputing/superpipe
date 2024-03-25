@@ -56,7 +56,7 @@ class Pipeline:
 
     def __init__(self,
                  steps: List[Step],
-                 evaluation_fn: Callable[[any], bool] = None):
+                 evaluation_fn: Callable[[any], Union[bool, float]] = None):
         self.steps = steps
         self.evaluation_fn = evaluation_fn
         self.data = None
@@ -103,6 +103,7 @@ class Pipeline:
             print("No data provided")
             return
         results = self.data.apply(lambda row: evaluation_fn(row), axis=1)
+        self.data[f"__{evaluation_fn.__name__}__"] = results
         self.score = results.sum() / len(results)
         return self.score
 

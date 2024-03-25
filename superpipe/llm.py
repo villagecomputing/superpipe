@@ -2,8 +2,8 @@ import time
 import json
 from pydantic import BaseModel
 from openai.types.chat.completion_create_params import CompletionCreateParamsNonStreaming
-from superpipe.models import gpt35, get_cost
-from superpipe.openai import get_client
+from superpipe.models import *
+from superpipe.clients import get_client
 
 
 class LLMResponse(BaseModel):
@@ -22,6 +22,46 @@ class StructuredLLMResponse(LLMResponse):
 
 
 def get_llm_response(
+        prompt: str,
+        model: str = gpt35,
+        args={}) -> LLMResponse:
+    if model in [claude3_haiku, claude3_sonnet, claude3_opus]:
+        return get_llm_response_anthropic(prompt, model, args)
+    return get_llm_response_openai(prompt, model, args)
+
+
+def get_llm_response_anthropic(
+        prompt: str,
+        model: str = claude3_haiku,
+        args={}) -> LLMResponse:
+    response = LLMResponse()
+    res = None
+    client = get_client(model)
+    if client is None:
+        raise ValueError("Unsupported model: ", model)
+    try:
+        start_time = time.perf_counter()
+        res = client.messages.create(
+            model=model,
+            max_tokens=4096,
+            messages=[{"role": "user", "content": prompt}],
+            **args
+        )
+        end_time = time.perf_counter()
+        response.latency = end_time - start_time
+        response.input_tokens = res.usage.input_tokens
+        response.output_tokens = res.usage.output_tokens
+        response.input_cost, response.output_cost = get_cost(
+            response.input_tokens, response.output_tokens, model)
+        response.content = res.content[0].text
+        response.success = True
+    except Exception as e:
+        response.success = False
+        response.error = str(e)
+    return response
+
+
+def get_llm_response_openai(
         prompt: str,
         model=gpt35,
         args: CompletionCreateParamsNonStreaming = {}) -> LLMResponse:
@@ -52,6 +92,50 @@ def get_llm_response(
 
 
 def get_structured_llm_response(
+        prompt: str,
+        model: str = gpt35,
+        args={}) -> StructuredLLMResponse:
+    if model in [claude3_haiku, claude3_sonnet, claude3_opus]:
+        return get_structured_llm_response_anthropic(prompt, model, args)
+    return get_structured_llm_response_openai(prompt, model, args)
+
+
+def get_structured_llm_response_anthropic(
+        prompt: str,
+        model: str = claude3_haiku,
+        args={}) -> StructuredLLMResponse:
+    response = StructuredLLMResponse()
+    res = None
+    client = get_client(model)
+    if client is None:
+        raise ValueError("Unsupported model: ", model)
+    try:
+        start_time = time.perf_counter()
+        res = client.messages.create(
+            model=model,
+            max_tokens=4096,
+            system="You are a helpful assistant designed to output JSON. Return only JSON, nothing else.",
+            messages=[{"role": "user", "content": prompt}],
+            **args
+        )
+        end_time = time.perf_counter()
+        response.latency = end_time - start_time
+        response.input_tokens = res.usage.input_tokens
+        response.output_tokens = res.usage.output_tokens
+        response.input_cost, response.output_cost = get_cost(
+            response.input_tokens, response.output_tokens, model)
+        response.content = json.loads(res.content[0].text)
+        response.success = True
+    except Exception as e:
+        response.success = False
+        if res is None:
+            response.error = str(e)
+        else:
+            response.error = f"Failed to parse json: ${res.content[0].text}"
+    return response
+
+
+def get_structured_llm_response_openai(
         prompt: str,
         model=gpt35,
         args: CompletionCreateParamsNonStreaming = {}) -> StructuredLLMResponse:
