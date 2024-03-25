@@ -66,6 +66,10 @@ nav:
   - Superpipe Studio:
       - studio/index.md
 
+  - Blog:
+      - blog/index.md
+      - blog/introducing_superpipe/index.md
+
 markdown_extensions:
   - admonition
   - pymdownx.arithmatex:
