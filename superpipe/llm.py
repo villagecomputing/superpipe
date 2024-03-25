@@ -104,6 +104,7 @@ def get_structured_llm_response_anthropic(
         prompt: str,
         model: str = claude3_haiku,
         args={}) -> StructuredLLMResponse:
+    print("Warning: Anthropic models do not support structured output, this may cause unexpected issues.")
     response = StructuredLLMResponse()
     res = None
     client = get_client(model)

@@ -63,7 +63,7 @@ nav:
       - examples/comparing_pipelines/furniture.ipynb
       - examples/custom_eval/jokes.ipynb
 
-  - Studio:
+  - Superpipe Studio:
       - studio/index.md
 
 markdown_extensions:

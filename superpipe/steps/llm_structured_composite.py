@@ -8,6 +8,7 @@ from superpipe.llm import (
     get_llm_response)
 from superpipe.pydantic import describe_pydantic_model
 from superpipe.steps.llm_step import LLMStep, StepResult
+from superpipe.steps.utils import combine_step_row_statistics
 from superpipe.models import gpt35
 
 T = TypeVar('T', bound=BaseModel)
@@ -72,6 +73,7 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
         compiled_prompt = prompt(row)
         try:
             response = get_llm_response(compiled_prompt, model, openai_args)
+            statistics_first = self._get_row_statistics(response)
             if response.success:
                 compiled_prompt = self._compile_structured_prompt(
                     response.content)
@@ -84,8 +86,11 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
             # TODO: need better error logging here include stacktrace
             response = StructuredLLMResponse(
                 success=False, error=str(e), latency=0)
+        # TODO: combine model dumps of both LLM calls
         result = {f"__{self.name}__": response.model_dump()}
-        statistics = self._get_row_statistics(response)
+        statistics_second = self._get_row_statistics(response)
+        statistics = combine_step_row_statistics(
+            [statistics_first, statistics_second])
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content
@@ -95,5 +100,5 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
                     print(
                         f"Step {self.name}: Missing field {field} in response {content}")
                 val = content.get(field)
-                result[field] = val or ""
+                result[field] = val if val is not None else ""
         return StepResult(fields=result, statistics=statistics)
