@@ -20,7 +20,7 @@ data = [
   ("Bill Gates", "1955-10-28", True, "N/A"),
   ("Steph Curry", "1988-03-14", True, "N/A"),
   ("Scott Belsky", "1980-04-18", True, "N/A"),
-  ("Steve Jobs", "1955-02-24", False, "Pancreatic cancer"),
+  ("Steve Jobs", "1955-02-24", False, "Pancreatic tumor/cancer"),
   ("Paris Hilton", "1981-02-17", True, "N/A"),
   ("Kurt Vonnegut", "1922-11-11", False, "Brain injuries"),
   ("Snoop Dogg", "1971-10-20", True, "N/A"),

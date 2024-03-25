@@ -4,7 +4,7 @@ _In [Step 1](../build) we built a pipeline that receives a famous person's name 
 
 <hr>
 
-First let's inspect the pipeline's statistics to figure out where there's room for improvement.
+In the previous step the pipeline had an accuracy score of 100%, but perhaps there's room for improvement on cost and speed. First let's view the cost and latency of each step to figure out which one is the bottleneck.
 
 [View notebook on Github](https://github.com/villagecomputing/superpipe/tree/main/docs/examples/web_scraping/web_scraping.ipynb)
 
@@ -14,6 +14,8 @@ for step in pipeline.steps:
   print(f"- Latency: {step.statistics.total_latency}")
   print(f"- Cost: {step.statistics.input_cost + step.statistics.output_cost}")
 ```
+
+**Output:**
 
 ```
 Step search:
@@ -63,7 +65,13 @@ grid_search = GridSearch(new_pipeline, param_grid)
 grid_search.run(df)
 ```
 
+**Output:**
+
 <p align="center"><img src="../assets/wikipedia_gridsearch.png" style="width: 800px;" /></p>
+
+Strangely, Claude 3 Haiku is both more accurate (100% v/s 45%) as well as cheaper and faster. _This is suprising, but useful information that we wouldn't have found out unless we built and evaluated pipelines on our specific data rather than benchmark data._
+
+Finally we'll re-run the pipeline with the best params and print out the cost and latency of each step.
 
 ```python
 best_params = grid_search.best_params
@@ -75,6 +83,28 @@ for step in new_pipeline.steps:
   print(f"- Latency: {step.statistics.total_latency}")
   print(f"- Cost: {step.statistics.input_cost + step.statistics.output_cost}")
 ```
+
+**Output:**
+
+```
+Score:  1.0
+Step search:
+- Latency: 8.75270938873291
+- Cost: 0.0
+Step parse_search:
+- Latency: 11.506851500831544
+- Cost: 0.007930999999999999
+Step wikipedia:
+- Latency: 3.9602952003479004
+- Cost: 0.0
+Step extract_data_new:
+- Latency: 87.57113150181249
+- Cost: 0.12396325000000001
+```
+
+**Incredibly, we were able to get the same score (100%) as GPT4 but with the final step being 20% faster and 38x cheaper!!**
+
+This is why the optimization step is so important.
 
 ## Next Steps
 
