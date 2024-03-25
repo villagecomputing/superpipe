@@ -4,3 +4,4 @@ from .llm_structured import *
 from .custom import *
 from .serp import *
 from .llm_step import *
+from .llm_structured_composite import *
