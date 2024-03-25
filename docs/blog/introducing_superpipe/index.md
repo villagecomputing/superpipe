@@ -15,7 +15,7 @@ Through working on these projects, we noticed a few problems.
 
 1. Many companies **lacked ground truth data** and were doing “vibe-check” engineering with LLMs. 
 2. When companies did have **ground truth data it was often inaccurate.**
-3. **Existing evaluation tools are focused only on the LLM step** of the pipeline, but multistep pipelines need to be optimized end-to-end.
+3. **Existing evaluation tools are focused only on the LLM step** of the pipeline, but multi-step pipelines need to be optimized end-to-end.
 
 Despite these limitation, we were able to get very high quality results.  First, we learned that LLMs are actually very good at classification and extraction when used correctly. Second, we came to the conclusion that multi-step techniques worked quite well on a wide variety of use cases and outperformed zero-shot prompting much of the time. And finally, we observed that there’s often quite a bit of cost and speed headroom without a loss in quality if you use cheaper models for “easy” steps, and expensive models for “hard” steps.
 
@@ -36,7 +36,7 @@ Today we’re open-sourcing Superpipe under the MIT license so that you can buil
 
 As ML engineers (even before LLMs) we knew the importance of high quality ground truth data and proper evaluation metrics. However, what we learned is that those without experience building probabilistic systems hadn’t necessarily learned those lessons yet. Now that every engineer can use AI with a few lines of code, it’s important to [start thinking less like an engineer, and more like a scientist.](https://www.scharfste.in/evaluation-is-all-you-need-think-like-a-scientist-when-building-ai/) 
 
-To put it in traditional software engineering terms, Superpipe brings test driven development to LLM pipelines. You can think of each labeled datapoint as a unit test with the expectation that not all your tests will pass. 
+To put it in traditional software engineering terms, Superpipe brings test driven development to LLM pipelines. You can think of each labeled data point as a unit test with the expectation that not all your tests will pass. 
 
 Test will help you evaluate accuracy but that’s only half the equation. When building with LLMs, there’s generally a tradeoff between cost/speed and accuracy. On the same pipeline and prompts, cheaper models are generally faster and but less accurate. 
 
@@ -52,7 +52,7 @@ There are three steps to using Superpipe:
 2. **Evaluate** - generate and label ground truth data. Evaluate your results on speed, cost and accuracy.
 3. **Optimize** - run a Grid Search over the parameters of your pipeline to understand the tradeoffs between models, prompts, and other parameters.
 
-The result of this process is a rigogrous understanding of the cost, speed, and accuracy tradeoffs between different approaches, conveniently presented to you right in your notebook.
+The result of this process is a rigorous understanding of the cost, speed, and accuracy tradeoffs between different approaches, conveniently presented to you right in your notebook.
 
 ![grid search](grid.png)
 
