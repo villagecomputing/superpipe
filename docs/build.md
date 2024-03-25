@@ -1,27 +1,6 @@
 # Step 1: Build
 
-Let's start with Build. We'll build a pipeline that receives a list of names of famous people and figures out their birthdays and whether they're still alive. You can also download this as a [notebook](https://github.com/villagecomputing/superpipe/tree/main/docs/examples/web_scraping/web_scraping.ipynb) on Github.
-
-First we define the input data. Although not a requirement, Superpipe works best with pandas dataframes.
-
-```python
-import pandas as pd
-
-names = [
-  "Reid Hoffman",
-  "Bill Gates",
-  "Steph Curry",
-  "Scott Belsky",
-  "Paris Hilton",
-  "Snoop Dogg",
-  "Ryan Reynolds",
-  "Kevin Durant",
-  "Mustafa Suleyman",
-  "Aaron Swartz" # RIP
-]
-
-names_df = pd.DataFrame([{"name": name} for name in names])
-```
+_We'll use Superpipe to build a pipeline that receives a famous person's name and figures out their birthday, whether they're still alive, and if not, their cause of death._
 
 This pipeline will work in 4 steps -
 
@@ -30,13 +9,14 @@ This pipeline will work in 4 steps -
 3. Fetch the contents of the wikipedia page and convert them to markdown
 4. Use an LLM to extract the birthdate and living or dead from the wikipedia contents
 
-This is purely for illustration, and definitely not the most efficient way to accomplish this task.
+We'll build the pipeline, evaluate it on some data, and optimize it to maximize accuracy while reducing cost and latency.
+
+[View notebook on Github](https://github.com/villagecomputing/superpipe/tree/main/docs/examples/web_scraping/web_scraping.ipynb)
 
 ```python
 from superpipe.steps import LLMStructuredStep, CustomStep, SERPEnrichmentStep
 from superpipe import models
 from pydantic import BaseModel, Field
-import requests
 
 # Step 1: use Superpipe's built-in SERP enrichment step to search for the persons wikipedia page
 # Include a unique "name" for the step that will used to reference this step's output in future steps
@@ -67,7 +47,9 @@ Next, we'll create the final 2 steps of the pipeline and then the pipeline itsel
 
 ```python
 from superpipe.pipeline import Pipeline
+import requests
 import html2text
+
 h = html2text.HTML2Text()
 h.ignore_links = True
 
@@ -79,15 +61,17 @@ fetch_wikipedia_step = CustomStep(
   name="wikipedia"
 )
 
-# Step 4: we extract the date of birth and alive or dead status from the wikipedia contents
+# Step 4: we extract the date of birth, living/dead status and cause of death from the wikipedia contents
 
 class ExtractedData(BaseModel):
     date_of_birth: str = Field(description="The date of birth of the person in the format YYYY-MM-DD")
-    alive: bool = Field(description="Whether the person is still alive, make sure to return true or false")
+    alive: bool = Field(description="Whether the person is still alive")
+    cause_of_death: str = Field(description="The cause of death of the person. If the person is alive, return 'N/A'")
 
 extract_step = LLMStructuredStep(
   model=models.gpt4,
-  prompt= lambda row: f"Extract the date of birth for {row['name']} and whether they're still alive from the following Wikipedia content: \n\n {row['wikipedia']}",
+  prompt= lambda row: f"""Extract the date of birth for {row['name']}, whether they're still alive \
+  and if not, their cause of death from the following Wikipedia content: \n\n {row['wikipedia']}""",
   out_schema=ExtractedData,
   name="extract_data"
 )
@@ -101,28 +85,62 @@ pipeline = Pipeline([
   extract_step
 ])
 
-pipeline.run(names_df)
+pipeline.run({"name": "Jean-Paul Sartre"})
 ```
 
-**Outputs**
+**Output**
 
-When the pipeline is run, it will write all the intermediate outputs and the final outputs into `names_df` and print the dataframe.
+When we run the pipeline, it returns an object that contains:
 
-<p align="center"><img src="../outputs.png" style="width: 800px;" /></p>
+- the original input
+- the outputs of each step in the pipeline
+- some metadata associated with each LLM step
 
-**Pipeline Statistics**
-
-You can view the statistics (cost, token usage and latency) of the run with
-
-```python
-print(pipeline.statistics)
+```json
+{
+  "name": "Jean-Paul Sartre",
+  "search": "{\"searchParameters\":{\"q\":\"Jean-Paul Sartre wikipedia\",\"type\":\"search\",\"engine\":\"google\"},...}",
+  "__parse_search__": {
+    "input_tokens": 1704,
+    "output_tokens": 23,
+    "input_cost": 0.000852,
+    "output_cost": 3.45e-5,
+    "success": true,
+    "error": null,
+    "latency": 0.9851684169843793,
+    "content": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jean-Paul_Sartre"
+    }
+  },
+  "wikipedia_url": "https://en.wikipedia.org/wiki/Jean-Paul_Sartre",
+  "wikipedia": "Jump to content\n\nMain menu\n\nMain menu\n\nmove to sidebar hide\n\nNavigation\n\n  *...",
+  "__extract_data__": {
+    "input_tokens": 32542,
+    "output_tokens": 35,
+    "input_cost": 0.32542,
+    "output_cost": 0.00105,
+    "success": true,
+    "error": null,
+    "latency": 8.941851082723588,
+    "content": {
+      "date_of_birth": "1905-06-21",
+      "alive": false,
+      "cause_of_death": "pulmonary edema"
+    }
+  },
+  "date_of_birth": "1905-06-21",
+  "alive": false,
+  "cause_of_death": "pulmonary edema"
+}
 ```
 
-<p align="center"><img src="../statistics.png" style="width: 800px;" /></p>
+Inspecting the last 3 fields of the output, we see that its results were correct.
+
+Now, let's see how to [evaluate this pipeline](../evaluate) on a labeled dataset.
 
 ## Next Steps
 
-[**Evaluate**](../evaluate) &mdash; to learn about evaluating your pipelines.
+[**Step 2: Evaluate**](../evaluate) &mdash; to learn about evaluating your pipelines.
 
 [**Concepts**](../concepts) &mdash; to understand the core concepts behind Superpipe.
 
