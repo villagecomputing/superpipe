@@ -2,6 +2,8 @@
 
 _We'll use Superpipe to build a pipeline that receives a famous person's name and figures out their birthday, whether they're still alive, and if not, their cause of death._
 
+<hr>
+
 This pipeline will work in 4 steps -
 
 1. Do a google search with the person's name
@@ -88,7 +90,7 @@ pipeline = Pipeline([
 pipeline.run({"name": "Jean-Paul Sartre"})
 ```
 
-**Output**
+## Output
 
 When we run the pipeline, it returns an object that contains:
 

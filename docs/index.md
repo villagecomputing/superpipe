@@ -80,10 +80,12 @@ job_department_step.run(input)
 
 ### Evaluate
 
-Once you've built your pipeline it's time to see how well it works. This requires:
+Once you've built your pipeline it's time to see how well it works. Think of this as unit tests for your code. You wouldn't ship code to production without testing it, you shouldn't ship LLM pipelines to production without evaluating them.
 
-- **Evaluation function** - a function that defines what "correct" is. In this example we use a simple string comparison evaluation function, but in general it could be any arbitrary function, including a call to an LLM to do more advanced evals.
+This requires:
+
 - **A dataset with labels** - the _correct_ label for each row in your data. You can use an early version of your pipeline to generate _candidate labels_ and manually inspect and correct to generate your ground truth.
+- **Evaluation function** - a function that defines what "correct" is. In this example we use a simple string comparison evaluation function, but in general it could be any arbitrary function, including a call to an LLM to do more advanced evals.
 
 ```python
 from superpipe.pipeline import Pipeline

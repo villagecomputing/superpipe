@@ -3,7 +3,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 import pandas as pd
 from prettytable import PrettyTable
-from superpipe.steps import Step, LLMStep, LLMStructuredStep
+from superpipe.steps import Step, LLMStep, LLMStructuredStep, LLMStructuredCompositeStep
 from superpipe.config import is_dev
 
 
@@ -116,15 +116,17 @@ class Pipeline:
         else:
             success = True
         for step in self.steps:
+            self.statistics.input_cost += step.statistics.input_cost
+            self.statistics.output_cost += step.statistics.output_cost
+            self.statistics.total_latency += step.statistics.total_latency
             # TODO: this needs to work for CustomSteps that make LLM calls too
-            if isinstance(step, LLMStep) or isinstance(step, LLMStructuredStep):
+            if isinstance(step, LLMStep) or isinstance(step, LLMStructuredStep) \
+                    or isinstance(step, LLMStructuredCompositeStep):
                 model = step.model
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens
-                self.statistics.input_cost += step.statistics.input_cost
-                self.statistics.output_cost += step.statistics.output_cost
-                self.statistics.total_latency += step.statistics.total_latency
 
+                # TODO: success calculation needs to work for non LLM steps too
                 if isinstance(data, pd.DataFrame):
                     success = success & data.apply(
                         lambda x: x[f"__{step.name}__"]["success"], axis=1)

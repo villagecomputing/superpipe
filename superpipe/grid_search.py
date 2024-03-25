@@ -5,7 +5,6 @@ import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
 from superpipe.util import df_apply_gradients
-from tqdm import tqdm
 
 
 class GridSearch:
@@ -100,8 +99,7 @@ class GridSearch:
         """
         results = []
         n = len(self.params_list)
-        for i, params in tqdm(enumerate(self.params_list),
-                              desc=f"Running grid search over {n} combinations"):
+        for i, params in enumerate(self.params_list):
             # TODO: check for duplicate params because of steps overriding global params
             if verbose:
                 print(f"Iteration {i+1} of {n}")
@@ -126,7 +124,8 @@ class GridSearch:
                 'num_failure': self.pipeline.statistics.num_failure,
                 'index': index
             }
-            print("Result: ", result)
+            if verbose:
+                print("Result: ", result)
             results.append(result)
         self.results = pd.DataFrame(results)
         self._update_best()
