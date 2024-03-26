@@ -1,3 +1,9 @@
+---
+title: Optimized LLM pipelines for structured data
+description: A lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs
+social_image: assets/overview.png
+---
+
 # Superpipe - optimized LLM pipelines for structured data
 
 _A lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate pipelines on your own data and optimize models, prompts and other parameters for the best accuracy, cost, and speed._
@@ -28,7 +34,7 @@ There are three stages of using Superpipe.
 
 In this toy example, we'll use Superpipe to classify someone's work history into job departments. A superpipe pipeline consists of one or more [steps](./concepts/steps/). Each step takes in an input dataframe or dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
 
-Below, we use a built-in Superpipe step: [`LLMStructuredStep`](./concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic]() model.
+Below, we use a built-in Superpipe step: [`LLMStructuredStep`](./concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic](https://docs.pydantic.dev/latest/) model.
 
 ```python
 from superpipe.steps import LLMStructuredStep

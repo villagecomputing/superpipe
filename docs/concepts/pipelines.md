@@ -34,7 +34,7 @@ categorizer.update_params({
 
 ## Example
 
-You can find the full code for this example in the [comparing pipelines](https://github.com/villagecomputing/superpipe/blob/main/examples/comparing_pipelines/furniture.ipynb) example. This is just the pipeline definition.
+You can find the full code for this example in the [comparing pipelines](../examples/comparing_pipelines/furniture.ipynb) example. This is just the pipeline definition.
 
 ```python
 evaluate = lambda row: row['predicted_category'].lower() == row['category_new'].lower()
