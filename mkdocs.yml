@@ -7,6 +7,7 @@ site_url: https://superpipe.ai
 
 theme:
   name: material
+  custom_dir: docs/overrides
   logo: assets/superpipe.png
   features:
     - navigation.sections
@@ -19,6 +20,8 @@ theme:
     - navigation.footer
     - search.suggest
     - search.highlight
+    - navigation.tabs
+    - navigation.tabs.sticky
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -63,8 +66,11 @@ nav:
       - examples/comparing_pipelines/furniture.ipynb
       - examples/custom_eval/jokes.ipynb
 
-  - Superpipe Studio:
+  - Studio:
       - studio/index.md
+
+  - Work with us:
+      - consulting.md
 
   - Blog:
       - blog/index.md
