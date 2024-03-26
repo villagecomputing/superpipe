@@ -1,3 +1,8 @@
+---
+title: "Superpipe: Optimized LLM pipelines"
+---
+
+
 # Superpipe - optimized LLM pipelines for structured data
 
 _A lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate pipelines on your own data and optimize models, prompts and other parameters for the best accuracy, cost, and speed._
