@@ -1,6 +1,6 @@
 # Step 2: Evaluate
 
-_In [Step 1](../build) we built a pipeline that receives a famous person's name and figures out their birthday, whether they're still alive, and if not, their cause of death. Now, we'll evaluate it on a dataset. Think of this as unit tests for your code. You wouldn't ship code to production without testing it, you shouldn't ship LLM pipelines to production without evaluating them._
+_In [Step 1](./build.md) we built a pipeline that receives a famous person's name and figures out their birthday, whether they're still alive, and if not, their cause of death. Now, we'll evaluate it on a dataset. Think of this as unit tests for your code. You wouldn't ship code to production without testing it, you shouldn't ship LLM pipelines to production without evaluating them._
 
 <hr>
 
@@ -64,16 +64,16 @@ Score: 1.0
 
 <p align="center"><img src="../assets/wikipedia_results.png" style="width: 800px;" /></p>
 
-Our pipeline gets an accuracy score of 100% on this dataset! This is great news. But before we deploy this in production, we'll look at the cost and speed of the pipeline and try to [optimize](../optimize) it.
+Our pipeline gets an accuracy score of 100% on this dataset! This is great news. But before we deploy this in production, we'll look at the cost and speed of the pipeline and try to [optimize](./optimize.md) it.
 
 #### A note on ground truth labels
 
-So far we've assumed we somehow had ground truth labels already. Usually this is not the case. Since our pipeline had 100% accuracy, we could've used it to generate ground truth labels if we didn't already have them. We'd of course have to manually inspect and fix any incorrect ones, which is a slow and tedious process. We're building [Superpipe Studio](../studio) to make this process easier.
+So far we've assumed we somehow had ground truth labels already. Usually this is not the case. Since our pipeline had 100% accuracy, we could've used it to generate ground truth labels if we didn't already have them. We'd of course have to manually inspect and fix any incorrect ones, which is a slow and tedious process. We're building [Superpipe Studio](./studio.md) to make this process easier.
 
 ## Next Steps
 
-[**Optimize**](../optimize) &mdash; to learn about optimizing your pipelines for accuracy, cost & speed.
+[**Optimize**](./optimize.md) &mdash; to learn about optimizing your pipelines for accuracy, cost & speed.
 
-[**Concepts**](../concepts) &mdash; to understand the core concepts behind Superpipe.
+[**Concepts**](./concepts.md) &mdash; to understand the core concepts behind Superpipe.
 
-[**Examples**](../examples) &mdash; for more advanced examples and usage.
+[**Examples**](./examples.md) &mdash; for more advanced examples and usage.

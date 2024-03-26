@@ -36,7 +36,7 @@ Today we’re open-sourcing Superpipe under the MIT license so that you can buil
 
 ## Superpipe helps engineers think like scientists
 
-<p align="center"><img src="../assets/venn.png" style="width: 600px;" /></p>
+![Venn diagram of Superpipe](assets/venn.png)
 
 As ML engineers (even before LLMs) we knew the importance of high quality ground truth data and proper evaluation metrics. However, what we learned is that those without experience building probabilistic systems hadn’t necessarily learned those lessons yet. Now that every engineer can use AI with a few lines of code, it’s important that [engineers start thinking more like scientists.](https://www.scharfste.in/evaluation-is-all-you-need-think-like-a-scientist-when-building-ai/)
 
@@ -46,7 +46,7 @@ Tests will help you evaluate accuracy, but that’s only half the equation. When
 
 However, pipelines aren’t static. You can vary prompts, augment with retrieval, chain LLMs, enrich with public information and more. Superpipe will help you iterate faster and build cheaper and more accurate classification and extraction pipelines. In many cases, you can skip straight from v1—>v6.
 
-<p align="center"><img src="../assets/iteration.png" style="width: 600px;" /></p>
+![iterating with Superpipe](assets/iteration.png)
 
 ## How it works
 
@@ -58,7 +58,7 @@ There are three steps to using Superpipe:
 
 The result of this process is a rigorous understanding of the cost, speed, and accuracy tradeoffs between different approaches, conveniently presented to you right in your notebook.
 
-<p align="center"><img src="../assets/grid.png" style="width: 600px;" /></p>
+![grid search](assets/grid.png)
 
 ## Learn more
 
