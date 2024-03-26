@@ -28,17 +28,17 @@ pip install superpipe-py
 
 There are three stages of using Superpipe.
 
-1. [**Build**](./build) &mdash; use your favorite LLM library (langchain, LlamaIndex) and combine with Superpipe's building blocks.
-2. [**Evaluate**](./evaluate) &mdash; your pipeline needs to be evaluated on _your_ data. Your data and use case are unique, so benchmarks are insufficient.
-3. [**Optimize**](./optimize) &mdash; build once, experiment many times. Easily try different models, prompts, and parameters to optimize end-to-end.
+1. [**Build**](https://superpipe.ai/build) &mdash; use your favorite LLM library (langchain, LlamaIndex) and combine with Superpipe's building blocks.
+2. [**Evaluate**](https://superpipe.ai/evaluate) &mdash; your pipeline needs to be evaluated on _your_ data. Your data and use case are unique, so benchmarks are insufficient.
+3. [**Optimize**](https://superpipe.ai/optimize) &mdash; build once, experiment many times. Easily try different models, prompts, and parameters to optimize end-to-end.
 
-**To see a toy example, keep reading. For more details go to [Step 1: Build](./build)**
+**To see a toy example, keep reading. For more details go to [Step 1: Build](https://superpipe.ai/build)**
 
 ### Build
 
-In this toy example, we'll use Superpipe to classify someone's work history into job departments. A superpipe pipeline consists of one or more [steps](./concepts/steps/). Each step takes in an input dataframe or dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
+In this toy example, we'll use Superpipe to classify someone's work history into job departments. A superpipe pipeline consists of one or more [steps](https://superpipe.ai/concepts/steps/). Each step takes in an input dataframe or dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
 
-Below, we use a built-in Superpipe step: [`LLMStructuredStep`](./concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic](https://docs.pydantic.dev/latest/) model.
+Below, we use a built-in Superpipe step: [`LLMStructuredStep`](https://superpipe.ai/concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic](https://docs.pydantic.dev/latest/) model.
 
 ```python
 from superpipe.steps import LLMStructuredStep
@@ -152,7 +152,7 @@ print(categorizer.statistics)
 
 ### Optimize
 
-The last step in using Superpipe is trying out many combinations of parameters to optimize your pipeline along **cost, accuracy, and speed**. In this example, we'll try two different models and two prompts (4 combinations). Superpipe's [grid search](../concepts/grid_search) makes it easy to try all combinations - build once, experiment many times.
+The last step in using Superpipe is trying out many combinations of parameters to optimize your pipeline along **cost, accuracy, and speed**. In this example, we'll try two different models and two prompts (4 combinations). Superpipe's [grid search](https://superpipe.ai/concepts/grid_search) makes it easy to try all combinations - build once, experiment many times.
 
 ```python
 from superpipe.grid_search import GridSearch
@@ -181,7 +181,7 @@ grid_search.run(input)
     1. The longer prompt is more accurate even though it costs more and is slower
     2. There's no advantage in using gpt4 instead of gpt3.5
 
-    <p align="center"><img src="./assets/grid_search.png" style="width: 800px;" /></p>
+    <p align="center"><img src="https://superpipe.ai/assets/grid_search.png" style="width: 800px;" /></p>
 
   </details>
 
