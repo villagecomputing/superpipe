@@ -4,13 +4,13 @@ date: 2024-03-26
 
 # Introducing Superpipe
 
-_By [Aman Dhesi](https://twitter.com/amansplaining) and [Ben Scharfstein](https://twitter.com/benscharfstein)_
+By [Aman Dhesi](https://twitter.com/amansplaining) and [Ben Scharfstein](https://twitter.com/benscharfstein)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/enJ2EB_qf1E?si=yCPDnCt4AwmE69AZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/enJ2EB_qf1E?si=yCPDnCt4AwmE69AZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
+
+_Superipe is a lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate pipelines on your own data and optimize models, prompts and other parameters for the best accuracy, cost, and speed._
 
 ---
-
-**Superipe is a lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate pipelines on your own data and optimize models, prompts and other parameters for the best accuracy, cost, and speed.**
 
 ## Why we built Superpipe
 
