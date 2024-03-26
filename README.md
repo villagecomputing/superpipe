@@ -63,14 +63,12 @@ job_department_step = LLMStructuredStep(
   name="job_department")
 
 job_department_step.run(input)
+
 ```
 
 <details>
   <summary>Output</summary>
 
-    In addition to the input (`work_history`) and result (`job_department`), the output also contains some step metadata for the `job_department` step including token usage, cost, and latency.
-
-    ```json
     {
       "work_history": "Software engineer at Tech Innovations, project manager at Creative Solutions, CTO at Startup Dreams.",
       "__job_department__": {
@@ -87,8 +85,10 @@ job_department_step.run(input)
       },
       "job_department": "Engineering"
     }
-    ```
   </details>
+
+
+  In addition to the input (`work_history`) and result (`job_department`), the output also contains some step metadata for the `job_department` step including token usage, cost, and latency.
 
 ### Evaluate
 
@@ -124,12 +124,11 @@ categorizer.run(input)
 print(categorizer.statistics)
 ```
 
+
+
 <details>
   <summary>Output</summary>
 
-    The `score` field is calculated by applying the evaluate function on each row. In this case we were able to correctly classify each row so the score is 1 (i.e. 100%). We can also see the total cost and latency.
-
-    ```
     +---------------+------------------------------+
     |     score     |             1.0              |
     +---------------+------------------------------+
@@ -147,9 +146,10 @@ print(categorizer.statistics)
     +---------------+------------------------------+
     | total_latency |      9.609524499624968       |
     +---------------+------------------------------+
-    ```
 </details>
 
+
+ The `score` field is calculated by applying the evaluate function on each row. In this case we were able to correctly classify each row so the score is 1 (i.e. 100%). We can also see the total cost and latency.
 ### Optimize
 
 The last step in using Superpipe is trying out many combinations of parameters to optimize your pipeline along **cost, accuracy, and speed**. In this example, we'll try two different models and two prompts (4 combinations). Superpipe's [grid search](https://superpipe.ai/concepts/grid_search) makes it easy to try all combinations - build once, experiment many times.
@@ -172,18 +172,13 @@ params_grid = {
 grid_search = GridSearch(categorizer, params_grid)
 grid_search.run(input)
 ```
+<p align="center"><img src="https://superpipe.ai/assets/grid_search.png" style="width: 800px;" /></p>
 
-<details>
-  <summary>Output</summary>
+The results of the grid search show that:
 
-    The results of the grid search show that:
+1. The longer prompt is more accurate even though it costs more and is slower
+2. There's no advantage in using gpt4 instead of gpt3.5
 
-    1. The longer prompt is more accurate even though it costs more and is slower
-    2. There's no advantage in using gpt4 instead of gpt3.5
-
-    <p align="center"><img src="https://superpipe.ai/assets/grid_search.png" style="width: 800px;" /></p>
-
-  </details>
 
 ## Read the docs
 
