@@ -5,7 +5,7 @@
 
 ---
 
-**Superpipe is a FOSS framework that helps you build, evaluate, and optimize LLM powered classification and extraction pipelines to make them faster, cheaper, and accurate.**
+**Superpipe is a FOSS framework that helps you build, evaluate, and optimize LLM powered classification and extraction pipelines to make them faster, cheaper, and more accurate.**
 
 ## Why we built Superpipe
 
