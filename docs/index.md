@@ -28,7 +28,7 @@ There are three stages of using Superpipe.
 
 In this toy example, we'll use Superpipe to classify someone's work history into job departments. A superpipe pipeline consists of one or more [steps](./concepts/steps/). Each step takes in an input dataframe or dictionary and returns a new dataframe or dictionary with the outputs of the step appended.
 
-Below, we use a built-in Superpipe step: [`LLMStructuredStep`](./concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic]() model.
+Below, we use a built-in Superpipe step: [`LLMStructuredStep`](./concepts/steps/LLMStructuredStep) which extracts structured data using an LLM call. The expected structure is specified by a [Pydantic](https://docs.pydantic.dev/latest/) model.
 
 ```python
 from superpipe.steps import LLMStructuredStep

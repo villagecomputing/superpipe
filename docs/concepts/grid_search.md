@@ -4,7 +4,7 @@ The core of Superpipe is running a grid search to optimize your pipeline. A grid
 
 `GridSearch` takes as inputs a pipeline and a dictionary of parameters to search over for each step.
 
-In our [Comparing Pipelines](https://github.com/villagecomputing/superpipe/blob/main/examples/comparing_pipelines/furniture.ipynb) example, we use a grid search to search over models and number of embedding results.
+In our [Comparing Pipelines](../examples/comparing_pipelines/furniture.ipynb) example, we use a grid search to search over models and number of embedding results.
 
 ```python
 from superpipe import grid_search
