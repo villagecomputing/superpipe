@@ -68,7 +68,6 @@ nav:
 
   - Blog:
       - blog/index.md
-      - blog/introducing_superpipe/index.md
 
 markdown_extensions:
   - admonition
@@ -117,9 +116,15 @@ plugins:
   - search
   - social:
       cards_layout: default
+  - blog
 
 social:
   - icon: fontawesome/brands/twitter
     link: https://twitter.com/villagecompute
   - icon: fontawesome/brands/github
     link: https://github.com/villagecomputing
+
+extra:
+  analytics:
+    provider: google
+    property: G-004PC5QJ4H
