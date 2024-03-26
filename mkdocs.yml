@@ -3,7 +3,7 @@ site_author: Aman Dhesi, Ben Scharfstein
 site_description: LLM pipelines for structured data extraction and classification
 repo_name: superpipe
 repo_url: https://github.com/villagecomputing/superpipe
-site_url: https://villagecomputing.co/superpipe
+site_url: https://superpipe.ai
 
 theme:
   name: material
@@ -115,6 +115,8 @@ plugins:
   - mkdocs-jupyter:
       include_source: True
   - search
+  - social:
+      cards_layout: default
 
 social:
   - icon: fontawesome/brands/twitter
