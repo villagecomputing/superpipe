@@ -38,5 +38,5 @@ def get_cost(prompt_tokens: int, completion_tokens: int, model: str):
     """
     pricing = _pricing.get(model)
     if not pricing or prompt_tokens is None or completion_tokens is None:
-        return None
+        return (0, 0)
     return (pricing[0]*prompt_tokens/1e6, pricing[1]*completion_tokens/1e6)
