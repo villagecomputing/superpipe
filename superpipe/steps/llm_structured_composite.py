@@ -87,10 +87,10 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
             response = StructuredLLMResponse(
                 success=False, error=str(e), latency=0)
         # TODO: combine model dumps of both LLM calls
-        result = {f"__{self.name}__": response.model_dump()}
         statistics_second = self._get_row_statistics(response)
         statistics = combine_step_row_statistics(
             [statistics_first, statistics_second])
+        result = {f"__{self.name}__": statistics.model_dump()}
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content
