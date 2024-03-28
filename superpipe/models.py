@@ -27,7 +27,7 @@ _pricing = {
 }
 
 
-def update_pricing(pricing: Dict[str, Tuple[float, float]]):
+def set_pricing(pricing: Dict[str, Tuple[float, float]]):
     global _pricing
     _pricing.update(pricing)
 

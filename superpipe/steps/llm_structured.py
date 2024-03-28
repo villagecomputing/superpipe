@@ -89,8 +89,8 @@ class LLMStructuredStep(LLMStep, Generic[T]):
             # TODO: need better error logging here include stacktrace
             response = StructuredLLMResponse(
                 success=False, error=str(e), latency=0)
-        result = {f"__{self.name}__": response.model_dump()}
         statistics = self._get_row_statistics(response)
+        result = {f"__{self.name}__": statistics.model_dump()}
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content
