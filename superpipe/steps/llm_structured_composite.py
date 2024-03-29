@@ -90,7 +90,10 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
         statistics_second = self._get_row_statistics(response)
         statistics = combine_step_row_statistics(
             [statistics_first, statistics_second])
-        result = {f"__{self.name}__": statistics.model_dump()}
+        result = {f"__{self.name}__": {
+            **statistics.model_dump(),
+            "error": response.error,
+        }}
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content

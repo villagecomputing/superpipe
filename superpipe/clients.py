@@ -30,7 +30,7 @@ def init_openrouter(api_key):
     openrouter_models.extend([model['id'] for model in models_json['data']])
     pricing_list = [(model['pricing']['prompt'], model['pricing']
                      ['completion']) for model in models_json['data']]
-    pricing_list = [(float(p[0])*1000, float(p[1])*1000) if float(p[0]) > 0 else (0, 0)
+    pricing_list = [(float(p[0])*1e6, float(p[1])*1e6) if float(p[0]) > 0 else (0, 0)
                     for p in pricing_list]
     for i, model in enumerate(openrouter_models):
         client_for_model[model] = openrouter_client
