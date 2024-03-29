@@ -123,6 +123,7 @@ class Pipeline:
             if isinstance(step, LLMStep) or isinstance(step, LLMStructuredStep) \
                     or isinstance(step, LLMStructuredCompositeStep):
                 model = step.model
+                # TODO: this assumed that each step has a unique model which is not true for composite step
                 self.statistics.input_tokens[model] += step.statistics.input_tokens
                 self.statistics.output_tokens[model] += step.statistics.output_tokens
 

@@ -54,7 +54,6 @@ def get_llm_response_openrouter(
             messages=messages,
             **args
         )
-        print(res)
         end_time = time.perf_counter()
         response.latency = end_time - start_time
         response.input_tokens = res.usage.prompt_tokens
@@ -80,8 +79,7 @@ def get_structured_llm_response_openrouter(
 def get_llm_response_anthropic(
         prompt: str,
         model: str = claude3_haiku,
-        args={},
-        system: str = None) -> LLMResponse:
+        args={}) -> LLMResponse:
     response = LLMResponse()
     res = None
     client = get_client(model)
@@ -93,7 +91,6 @@ def get_llm_response_anthropic(
         res = client.messages.create(
             model=model,
             max_tokens=4096,
-            system=system,
             messages=[{"role": "user", "content": prompt}],
             **args
         )
@@ -155,16 +152,39 @@ def get_structured_llm_response(
     return get_structured_llm_response_openai(prompt, model, args)
 
 
+def get_structured_llm_response_openrouter(
+        prompt: str,
+        model: str = "openrouter/auto",
+        args={}) -> StructuredLLMResponse:
+    print("Warning: Not all OpenRouter models support structured output, this may cause unexpected issues.")
+    system = "You are a helpful assistant designed to output JSON."
+    updated_args = {**args, "response_format": {"type": "json_object"}}
+    response = get_llm_response_openrouter(prompt, model, updated_args, system)
+    return StructuredLLMResponse(
+        input_tokens=response.input_tokens,
+        output_tokens=response.output_tokens,
+        input_cost=response.input_cost,
+        output_cost=response.output_cost,
+        success=response.success,
+        error=response.error,
+        latency=response.latency,
+        content=json.loads(response.content) if response.success else {},
+    )
+
+
 def get_structured_llm_response_anthropic(
         prompt: str,
         model: str = claude3_haiku,
         args={}) -> StructuredLLMResponse:
     print("Warning: Anthropic models do not support structured output, this may cause unexpected issues.")
+    updated_args = {
+        **args,
+        "system": "You are a helpful assistant designed to output JSON. Return only JSON, nothing else."
+    }
     return get_llm_response_anthropic(
         prompt,
         model,
-        system="You are a helpful assistant designed to output JSON. Return only JSON, nothing else.",
-        args=args)
+        args=updated_args)
 
 
 def get_structured_llm_response_openai(

@@ -75,7 +75,10 @@ class LLMStep(Step):
             response = LLMResponse(
                 success=False, error=str(e), latency=0)
         statistics = self._get_row_statistics(response)
-        result = {f"__{self.name}__": statistics.model_dump()}
+        result = {f"__{self.name}__": {
+            **statistics.model_dump(),
+            "error": response.error,
+        }}
         # TODO: how should we handle failure cases?
         if response.success:
             result[f"{self.name}"] = response.content
