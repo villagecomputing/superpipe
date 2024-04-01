@@ -1,0 +1,39 @@
+{
+  "sdkName": "LabelkitApp",
+  "apiVersion": "1.0.0",
+  "apiName": "LabelkitAppAPI",
+  "specFilePath": "http://localhost:3000/swagger.json",
+  "languages": [
+    "python"
+  ],
+  "createDocs": false,
+  "customizations": {
+    "includeOptionalSnippetParameters": true,
+    "devContainer": false,
+    "generateEnv": true,
+    "inferServiceNames": false,
+    "injectedModels": [],
+    "license": {
+      "type": "MIT"
+    },
+    "responseHeaders": false,
+    "retry": {
+      "enabled": true,
+      "maxAttempts": 3,
+      "retryDelay": 150
+    }
+  },
+  "languageOptions": {
+    "python": {
+      "alwaysInitializeOptionals": false,
+      "pypiPackageName": "",
+      "githubRepoName": "",
+      "ignoreFiles": [],
+      "sdkVersion": "1.0.0",
+      "liblabVersion": "2"
+    }
+  },
+  "publishing": {
+    "githubOrg": "villagecomputing"
+  }
+}

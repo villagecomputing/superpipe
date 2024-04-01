@@ -1,0 +1,145 @@
+[
+  {
+    "code": "info-contact",
+    "message": "Info object must have \"contact\" object.",
+    "path": [
+      "info"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 2,
+        "character": 10
+      },
+      "end": {
+        "line": 5,
+        "character": 3
+      }
+    }
+  },
+  {
+    "code": "info-description",
+    "message": "Info \"description\" must be present and non-empty string.",
+    "path": [
+      "info"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 2,
+        "character": 10
+      },
+      "end": {
+        "line": 5,
+        "character": 3
+      }
+    }
+  },
+  {
+    "code": "oas3-unused-component",
+    "message": "Potentially unused component has been detected.",
+    "path": [
+      "components",
+      "schemas",
+      "ApproveAllGroundTruthsPayload"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 226,
+        "character": 39
+      },
+      "end": {
+        "line": 236,
+        "character": 7
+      }
+    }
+  },
+  {
+    "code": "oas3-unused-component",
+    "message": "Potentially unused component has been detected.",
+    "path": [
+      "components",
+      "schemas",
+      "EditCellPayload"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 237,
+        "character": 25
+      },
+      "end": {
+        "line": 275,
+        "character": 7
+      }
+    }
+  },
+  {
+    "code": "oas3-unused-component",
+    "message": "Potentially unused component has been detected.",
+    "path": [
+      "components",
+      "schemas",
+      "EditGroundTruthCellResponse"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 276,
+        "character": 37
+      },
+      "end": {
+        "line": 286,
+        "character": 7
+      }
+    }
+  },
+  {
+    "code": "oas3-unused-component",
+    "message": "Potentially unused component has been detected.",
+    "path": [
+      "components",
+      "schemas",
+      "EditDatasetColumnPayload"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 287,
+        "character": 34
+      },
+      "end": {
+        "line": 305,
+        "character": 7
+      }
+    }
+  },
+  {
+    "code": "oas3-unused-component",
+    "message": "Potentially unused component has been detected.",
+    "path": [
+      "components",
+      "schemas",
+      "EditDatasetColumnResponse"
+    ],
+    "severity": 1,
+    "source": "swagger.json",
+    "range": {
+      "start": {
+        "line": 306,
+        "character": 35
+      },
+      "end": {
+        "line": 316,
+        "character": 7
+      }
+    }
+  }
+]
