@@ -4,62 +4,67 @@ date: 2024-03-28
 
 # Comparing GPT-4 and Claude 3 on long-context tasks
 
-By [Aman Dhesi](https://twitter.com/amansplaining) and [Ben Scharfstein](https://twitter.com/benscharfstein)
+_Why you should take benchmarks with a grain of salt_
 
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/enJ2EB_qf1E?si=yCPDnCt4AwmE69AZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></p>
+By [Aman Dhesi](https://twitter.com/amansplaining)
 
-_Superipe is a lightweight framework to build, evaluate and optimize LLM pipelines for structured outputs: data labeling, extraction, classification, and tagging. Evaluate pipelines on your own data and optimize models, prompts and other parameters for the best accuracy, cost, and speed._
+<hr>
 
----
+Anthropic released the Claude 3 family of models last month, [claiming it beats GPT-4 on all benchmarks](https://twitter.com/AnthropicAI/status/1764653830468428150). But others [disagreed with these claims](https://twitter.com/TolgaBilge_/status/1764754012824314102).
 
-## Why we built Superpipe
+So which one is it - is Claude 3 better than GPT-4 or not? And isn't the whole point of benchmarks to evaluate the models objectively and remove the guesswork?
 
-For the past few months we've been helping companies with structured data problems like product classification and document extraction.
+The answer is... it depends. Which model is better depends on what task you use the model for, and what data you use it on.
 
-Through working on these projects, we noticed a few problems.
+Instead of relying on third-party benchmarks, [as Hamel Husain suggests](https://www.linkedin.com/feed/update/urn:li:activity:7179532266283446272/) you should be evaluating models on your own, domain-specific data, with all its nuances and intricacies.
 
-1. Many companies were doing “vibe-check” engineering with LLMs and had **no idea how accurate their prompts and pipelines were.**
-2. Usually this was because they didn't have labeled data to evaluate on. Even when they did, their **labels were often inaccurate.**
-3. And they **lacked tools to rigorously compare** different approaches, prompts, models and parameters. This resulted in a mess of experiments spread across notebooks.
+In this short blogpost, we'll evaluate Claude 3 and GPT-4 on a specific long-context extraction task. We'll do this comparison using Superpipe which makes it easy to swap in different models and compare them on accuracy, cost and speed.
 
-Despite these limitations, we were able to get very high quality results. First, we learned that LLMs are actually very good at classification and extraction when used correctly. Second, we came to the conclusion that multi-step techniques worked quite well on a wide variety of use cases and outperformed zero-shot prompting much of the time. And finally, we observed that there’s usually a lot of cost and speed headroom without a loss in quality if you use cheaper models for “easy” steps, and expensive models for “hard” steps.
+All the code and data is available [in this Colab notebook](https://colab.research.google.com/drive/1JQpkQjHnFJ-8MkcyMLwdUq5Ve7OsmauO).
 
-After a few experiments and projects, our process became:
+## The task - long context extraction
 
-1. **Build** and run a v1 pipeline with a powerful model like GPT-4 for each step.
-2. **Evaluate** our pipeline by manually labelling ground truth data.
-3. **Optimize** the pipeline over prompts, models, and other parameters.
+For some types of tasks, we need LLMs with very long context windows. Currently the only LLMs with context windows longer than 100K are GPT-4 and the Claude 3 family of models.
 
-We built Superpipe to productize the the process of building, evaluating and optimizing the multi-step LLM pipelines we built. **With Superpipe, we’re able to build 10x cheaper pipelines, 10x faster.**
+Conventional wisdom suggests that the bigger and more expensive a model is, the more accurate it is on all tasks. Let's evaluate whether this is true on a specific task - extracting information from Wikipedia pages of famous people.
 
-Today we’re open-sourcing Superpipe under the MIT license so that you can build faster, better, and cheaper pipelines as well. You can view the source code [here](https://github.com/villagecomputing/superpipe).
+Given the wikipedia page of a (real) person, we'll use an LLM to extract their date of birth, whether or not they're still alive and if not, their cause of death.
 
-## Superpipe helps engineers think like scientists
+![long context comparison](assets/einstein.png)
 
-![Venn diagram of Superpipe](assets/venn.png)
+We'll perform a single LLM call and pass in the entire contents of the Wikipedia page. Wikipedia pages of famous people can easily be more than 50k tokens in length, which is why only models with context windows longer than 100k are eligible for this task.
 
-As ML engineers (even before LLMs) we knew the importance of high quality ground truth data and proper evaluation metrics. However, what we learned is that those without experience building probabilistic systems hadn’t necessarily learned those lessons yet. Now that every engineer can use AI with a few lines of code, it’s important that [engineers start thinking more like scientists.](https://www.scharfste.in/evaluation-is-all-you-need-think-like-a-scientist-when-building-ai/)
+## The data
 
-To put it in traditional software engineering terms, Superpipe brings test driven development to LLM pipelines. You can think of each labeled data point as a unit test. You wouldn't ship traditional software without units tests and you shouldn't ship LLM software without evals.
+Our dataset contains 49 data points, each containing 4 fields:
 
-Tests will help you evaluate accuracy, but that’s only half the equation. When building with LLMs, there’s generally a tradeoff between cost/speed and accuracy. On the same pipeline and prompts, cheaper models are generally faster and but less accurate.
+- a wikipedia url
+- the person's true date of birth
+- whether they're still alive
+- if not alive, cause of death
 
-However, pipelines aren’t static. You can vary prompts, augment with retrieval, chain LLMs, enrich with public information and more. Superpipe will help you iterate faster and build cheaper and more accurate classification and extraction pipelines. In many cases, you can skip straight from v1—>v6.
+![long context comparison](assets/data.png)
 
-![iterating with Superpipe](assets/iteration.png)
+The latter 3 fields are the labels, they're only used to evaluate the result of the LLM extraction. All the data can be found along with the code [here](https://colab.research.google.com/drive/1JQpkQjHnFJ-8MkcyMLwdUq5Ve7OsmauO).
 
-## How it works
+## Results
 
-There are three steps to using Superpipe:
+The results are in:
 
-1. **Build -** create a multistep Pipeline using Steps
-2. **Evaluate** - generate and label ground truth data. Evaluate your results on speed, cost and accuracy.
-3. **Optimize** - run a Grid Search over the parameters of your pipeline to understand the tradeoffs between models, prompts, and other parameters.
+- **The entire Claude 3 family outperforms GPT-4 on accuracy**
+- **Haiku and Sonnet are both significantly cheaper than GPT-4 (34x and 3x, respectively)**
+- There's no accuracy benefit in using Opus over Sonnet.
 
-The result of this process is a rigorous understanding of the cost, speed, and accuracy tradeoffs between different approaches, conveniently presented to you right in your notebook.
+Based on these results, I would deploy Sonnet if I mainly cared about accuracy and Haiku if I was cost-sensitive.
 
-![grid search](assets/grid.png)
+![long context comparison](assets/longcontext.png)
 
-## Learn more
+## Using superpipe to compare models
 
-The best way to learn more about Superpipe by reading our [docs](https://superpipe.ai), checking out our [Github](https://github.com/villagecomputing/superpipe), or asking questions on our [Discord](https://discord.gg/paV2qcHmH7).
+Superpipe takes care of all the boilerplate when comparing models on tasks, including
+
+- **Defining an eval function**, including using LLMs to perform evaluation
+- Keeping track of **token usage and latency**
+- **Error handling** to make sure a single error doesn't tank your whole experiment
+
+To learn more about how to use Superpipe, check out [the docs](https://superpipe.ai)
