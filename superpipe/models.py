@@ -2,6 +2,9 @@ from typing import Dict, Tuple
 
 gpt4 = "gpt-4-turbo-preview"
 gpt35 = "gpt-3.5-turbo-0125"
+gpt4_azure = "gpt4"
+gpt35_azure = "gpt35model"
+azure_ai_models = [gpt4_azure, gpt35_azure]
 mixtral = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 mistral = "mistralai/Mistral-7B-Instruct-v0.1"
 codellama = "togethercomputer/CodeLlama-34b-Instruct"
