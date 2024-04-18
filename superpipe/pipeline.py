@@ -5,11 +5,12 @@ import pandas as pd
 from prettytable import PrettyTable
 from superpipe.steps import Step, LLMStep, LLMStructuredStep, LLMStructuredCompositeStep
 from superpipe.config import is_dev
-
+from sklearn.metrics import confusion_matrix
 
 @dataclass
 class PipelineStatistics:
     score: Optional[float] = None
+    cm = None
     input_tokens: dict = field(default_factory=lambda: defaultdict(int))
     output_tokens: dict = field(default_factory=lambda: defaultdict(int))
     input_cost: float = 0.0
@@ -61,6 +62,7 @@ class Pipeline:
         self.evaluation_fn = evaluation_fn
         self.data = None
         self.score = None
+        self.cm = None
         self.statistics = PipelineStatistics()
 
     def run(self, data: Union[pd.DataFrame, Dict], row_wise=False, verbose=True):
@@ -105,6 +107,7 @@ class Pipeline:
         results = self.data.apply(lambda row: evaluation_fn(row), axis=1)
         self.data[f"__{evaluation_fn.__name__}__"] = results
         self.score = results.sum() / len(results)
+        self.cm = confusion_matrix(self.data.label, self.data.predict)
         return self.score
 
     def _aggregate_statistics(self, data: Union[pd.DataFrame, Dict]):
