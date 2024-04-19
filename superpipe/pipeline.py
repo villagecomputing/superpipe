@@ -62,6 +62,7 @@ class Pipeline:
         self.evaluation_fn = evaluation_fn
         self.data = None
         self.score = None
+        self.labels = None
         self.cm = None
         self.statistics = PipelineStatistics()
 
@@ -107,6 +108,7 @@ class Pipeline:
         results = self.data.apply(lambda row: evaluation_fn(row), axis=1)
         self.data[f"__{evaluation_fn.__name__}__"] = results
         self.score = results.sum() / len(results)
+        self.labels = list(set(self.data.label).union(self.data.predict))
         self.cm = confusion_matrix(self.data.label, self.data.predict)
         return self.score
 

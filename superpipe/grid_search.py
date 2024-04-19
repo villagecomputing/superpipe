@@ -115,6 +115,7 @@ class GridSearch:
             result = {
                 **GridSearch._flatten_params_dict(params),
                 'score': self.pipeline.score,
+                'lables': self.pipeline.labels,
                 'Confusion_matrix': self.pipeline.cm,
                 'input_cost': self.pipeline.statistics.input_cost,
                 'output_cost': self.pipeline.statistics.output_cost,
