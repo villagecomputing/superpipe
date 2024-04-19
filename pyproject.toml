@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "superpipe-py"
-version = "0.1.6"
+version = "0.1.7"
 description = "build unstructured to structured data transformation pipelines"
 authors = ["Aman Dhesi <aman@stelolabs.com>"]
 license = "MIT"
@@ -19,7 +19,6 @@ pydantic = "^2.6.1"
 prettytable = "^3.10.0"
 requests = "^2.31.0"
 anthropic = "^0.21.3"
-superpipe-studio = {path = "../superpipe-studio", develop = true}
 
 
 [tool.poetry.group.dev.dependencies]

@@ -2396,22 +2396,6 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
-name = "superpipe-studio"
-version = "0.0.1"
-description = ""
-optional = false
-python-versions = "^3.10"
-files = []
-develop = true
-
-[package.dependencies]
-httpx = "^0.27.0"
-
-[package.source]
-type = "directory"
-url = "../superpipe-studio"
-
-[[package]]
 name = "termcolor"
 version = "2.4.0"
 description = "ANSI color formatting for output in terminal"
@@ -2741,4 +2725,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "e9e1c47b698cb0879483784e89983b29e316b11815ac33cc26cef2dcec0a3e6f"
+content-hash = "a3b0569bc59be06586d9103e4612c60ce5580e5a823d643053f8f10ba3767c7b"
