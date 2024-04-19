@@ -46,6 +46,13 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
         self.structured_model = structured_model
         self.out_schema = out_schema
 
+    def get_params(self):
+        return {
+            **super().get_params(),
+            "structured_model": self.structured_model,
+            "out_schema": self.out_schema.model_json_schema()
+        }
+
     def _compile_structured_prompt(self, unstructured: str):
         prompt_main = f"""
         You are a helpful assistant designed to output JSON. Turn the following unstructured data into a structured JSON object.
@@ -75,10 +82,10 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
             response = get_llm_response(compiled_prompt, model, openai_args)
             statistics_first = self._get_row_statistics(response)
             if response.success:
-                compiled_prompt = self._compile_structured_prompt(
+                structured_prompt = self._compile_structured_prompt(
                     response.content)
                 response = get_structured_llm_response(
-                    compiled_prompt, structured_model, openai_args)
+                    structured_prompt, structured_model, openai_args)
             else:
                 response = StructuredLLMResponse(
                     success=False, error=response.error, latency=0)
@@ -90,10 +97,7 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
         statistics_second = self._get_row_statistics(response)
         statistics = combine_step_row_statistics(
             [statistics_first, statistics_second])
-        result = {f"__{self.name}__": {
-            **statistics.model_dump(),
-            "error": response.error,
-        }}
+        result = {}
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content
@@ -104,4 +108,4 @@ class LLMStructuredCompositeStep(LLMStep, Generic[T]):
                         f"Step {self.name}: Missing field {field} in response {content}")
                 val = content.get(field)
                 result[field] = val if val is not None else ""
-        return StepResult(fields=result, statistics=statistics)
+        return StepResult(fields=result, statistics=statistics, error=response.error, input=compiled_prompt)

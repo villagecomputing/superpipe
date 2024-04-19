@@ -1,10 +1,12 @@
+import pickle
+import hashlib
 from typing import List, Callable, Union, Dict, Optional
 from collections import defaultdict
 from dataclasses import dataclass, field
 import pandas as pd
 from prettytable import PrettyTable
 from superpipe.steps import Step, LLMStep, LLMStructuredStep, LLMStructuredCompositeStep
-from superpipe.config import is_dev
+from superpipe.config import is_dev, studio_enabled
 
 
 @dataclass
@@ -56,28 +58,38 @@ class Pipeline:
 
     def __init__(self,
                  steps: List[Step],
-                 evaluation_fn: Callable[[any], Union[bool, float]] = None):
+                 evaluation_fn: Callable[[any], Union[bool, float]] = None,
+                 name: str = None):
         self.steps = steps
         self.evaluation_fn = evaluation_fn
         self.data = None
         self.score = None
+        self.name = name or self.__class__.__name__
         self.statistics = PipelineStatistics()
 
-    def run(self, data: Union[pd.DataFrame, Dict], row_wise=False, verbose=True):
+    def run(self, data: Union[pd.DataFrame, Dict], enable_logging=False, row_wise=True, verbose=True):
+        def run_steps(row):
+            for step in self.steps:
+                step.run(row, verbose)
+            return row
+
         # Note: currently running row-wise is ~40% slower than step-wise (because of memory overhead?)
-        if row_wise and isinstance(data, pd.DataFrame):
-            def fn(row):
-                for step in self.steps:
-                    step.run(row, verbose)
-                return row
-            if verbose and is_dev:
-                from tqdm import tqdm
-                tqdm.pandas(desc=f"Running pipeline row-wise")
-                results = data.progress_apply(fn, axis=1)
+        if row_wise:
+            if enable_logging and studio_enabled():
+                from studio import run_pipeline_with_log
+                run_steps = run_pipeline_with_log(run_steps, self)
+            if isinstance(data, pd.DataFrame):
+                if verbose and is_dev:
+                    from tqdm import tqdm
+                    tqdm.pandas(desc=f"Running pipeline row-wise")
+                    results = data.progress_apply(run_steps, axis=1)
+                else:
+                    results = data.apply(run_steps, axis=1)
+                data[results.columns] = results
             else:
-                results = data.apply(fn, axis=1)
-            data[results.columns] = results
+                run_steps(data)
         else:
+            # logging not supported for step-wise execution
             for step in self.steps:
                 step.run(data, verbose)
         if isinstance(data, pd.DataFrame):
@@ -86,6 +98,23 @@ class Pipeline:
                 self.evaluate()
         self._aggregate_statistics(data)
         return data
+
+    def fingerprint(self, deep=False):
+        fingerprint_obj = {
+            "name": self.name,
+            "steps": [step.fingerprint(deep) for step in self.steps]
+        }
+        object_bytes = pickle.dumps(fingerprint_obj)
+        hash_object = hashlib.sha256()
+        hash_object.update(object_bytes)
+        return hash_object.hexdigest()
+
+    def get_params(self):
+        return {
+            k: v for k, v in [
+                (step.name, step.get_params()) for step in self.steps
+            ]
+        }
 
     # TODO: only include params relevant for each step, raise if param is not found in any step
     def update_params(self, params: Dict):

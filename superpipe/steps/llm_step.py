@@ -37,6 +37,20 @@ class LLMStep(Step):
         self.prompt = prompt
         self.openai_args = openai_args
 
+    def get_params(self):
+        """
+        Returns the parameters of the step.
+
+        Returns:
+            Dict: A dictionary of the step's parameters.
+        """
+        return {
+            **super().get_params(),
+            "model": self.model,
+            "prompt": self.prompt.__name__,
+            "openai_args": self.openai_args
+        }
+
     def _get_row_statistics(self, response: LLMResponse):
         """
         Create a StepRowStatistics object based on the response from the LLM.
@@ -75,11 +89,8 @@ class LLMStep(Step):
             response = LLMResponse(
                 success=False, error=str(e), latency=0)
         statistics = self._get_row_statistics(response)
-        result = {f"__{self.name}__": {
-            **statistics.model_dump(),
-            "error": response.error,
-        }}
+        result = {}
         # TODO: how should we handle failure cases?
         if response.success:
             result[f"{self.name}"] = response.content
-        return StepResult(fields=result, statistics=statistics)
+        return StepResult(fields=result, statistics=statistics, error=response.error, input=compiled_prompt)

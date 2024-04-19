@@ -42,6 +42,19 @@ class SERPEnrichmentStep(Step):
         self.prompt = prompt
         self.postprocess = postprocess
 
+    def get_params(self):
+        """
+        Returns the parameters of the step.
+
+        Returns:
+            Dict: A dictionary of the step's parameters.
+        """
+        return {
+            **super().get_params(),
+            "prompt": self.prompt.__name__,
+            "postprocess": self.postprocess.__name__ if self.postprocess is not None else None
+        }
+
     def _get_search_results(self, q):
         """
         Fetches search results for a given query string.
@@ -74,8 +87,8 @@ class SERPEnrichmentStep(Step):
         Returns:
             Dict: A dictionary containing the enriched data.
         """
-        prompt = self.prompt
+        search_prompt = self.prompt(row)
         postprocess = self.postprocess if self.postprocess is not None else lambda x: x
-        def fn(x): return postprocess(self._get_search_results(prompt(x)))
-        result, statistics = with_statistics(fn)(row)
-        return StepResult(fields={self.name: result}, statistics=statistics)
+        def fn(x): return postprocess(self._get_search_results(x))
+        result, statistics = with_statistics(fn)(search_prompt)
+        return StepResult(fields={self.name: result}, statistics=statistics, input=search_prompt)
