@@ -71,6 +71,22 @@ class EmbeddingSearchStep(Step):
             raise ValueError(
                 "Either candidates or candidates_fn must be provided")
 
+    def get_params(self):
+        """
+        Returns the parameters of the step.
+
+        Returns:
+            Dict: A dictionary of the step's parameters.
+        """
+        return {
+            **super().get_params(),
+            "search_prompt": self.search_prompt.__name__,
+            "embed_fn": self.embed_fn.__name__,
+            "candidates": self.candidates.__hash__() if self.candidates else None,
+            "candidates_fn": self.candidates_fn.__name__ if self.candidates_fn else None,
+            "k": self.k
+        }
+
     def update_params(self, params: Dict):
         """
         Updates the parameters of the step and rebuilds the index if embed_fn or candidates are updated.
