@@ -59,9 +59,13 @@ class Pipeline:
     def __init__(self,
                  steps: List[Step],
                  evaluation_fn: Callable[[any], Union[bool, float]] = None,
+                 output_fields: List[str] = None,
                  name: str = None):
+        if len(steps) == 0:
+            raise ValueError("Pipeline must contain at least one step")
         self.steps = steps
         self.evaluation_fn = evaluation_fn
+        self.output_fields = output_fields or steps[-1].output_fields()
         self.data = None
         self.score = None
         self.name = name or self.__class__.__name__

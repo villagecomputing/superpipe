@@ -64,7 +64,7 @@ class Step():
         """
         self.statistics = StepStatistics()
 
-    def outputs(self):
+    def output_fields(self):
         """
         Returns the fields that the step outputs.
 
