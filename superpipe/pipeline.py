@@ -108,8 +108,10 @@ class Pipeline:
         results = self.data.apply(lambda row: evaluation_fn(row), axis=1)
         self.data[f"__{evaluation_fn.__name__}__"] = results
         self.score = results.sum() / len(results)
-        self.labels = list(set(self.data.label).union(self.data.predict))
-        self.cm = confusion_matrix(self.data.label, self.data.predict)
+        labels = self.data.label.str.lower()
+        predicts = self.data.predict.str.lower()
+        self.labels = list(set(labels).union(predicts))
+        self.cm = confusion_matrix(labels, predicts)
         return self.score
 
     def _aggregate_statistics(self, data: Union[pd.DataFrame, Dict]):
