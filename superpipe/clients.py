@@ -16,8 +16,8 @@ def init_openai(api_key, base_url=None, api_version=None):
         openai_client = AzureOpenAI(api_key=api_key,
                                     azure_endpoint=base_url,
                                     api_version=api_version)
-        client_for_model[gpt35_azure] = openai_client
-        client_for_model[gpt4_azure] = openai_client
+        client_for_model[gpt35] = openai_client
+        client_for_model[gpt4] = openai_client
     else:
         openai_client = OpenAI(api_key=api_key)
         client_for_model[gpt35] = openai_client
