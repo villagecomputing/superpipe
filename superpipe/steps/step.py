@@ -1,4 +1,6 @@
-from typing import Union, Dict
+import hashlib
+import pickle
+from typing import Union, Dict, Optional
 from pydantic import BaseModel
 import pandas as pd
 from superpipe.config import is_dev
@@ -26,6 +28,8 @@ class StepRowStatistics(BaseModel):
 class StepResult(BaseModel):
     fields: Dict
     statistics: StepRowStatistics
+    error: Optional[str] = None
+    input: Optional[str] = None
 
 
 class Step():
@@ -60,6 +64,17 @@ class Step():
         """
         self.statistics = StepStatistics()
 
+    def output_fields(self):
+        """
+        Returns the fields that the step outputs.
+
+        Returns:
+            List[str]: A list of field names.
+        """
+        if hasattr(self, "out_schema"):
+            return list(self.out_schema.model_fields.keys())
+        return [self.name]
+
     def _update_statistics(self, statistics: StepRowStatistics):
         """
         Updates the statistics based on the response from the LLM.
@@ -76,6 +91,22 @@ class Step():
             self.statistics.num_failure += 1
         self.statistics.input_cost += statistics.input_cost
         self.statistics.output_cost += statistics.output_cost
+
+    def fingerprint(self, deep=False):
+        fingerprint_obj = {
+            "name": self.name,
+            "type": self.__class__.__name__,
+            "out_schema": getattr(self, "out_schema", None)
+        }
+        if deep:
+            fingerprint_obj["params"] = self.get_params()
+        object_bytes = pickle.dumps(fingerprint_obj)
+        hash_object = hashlib.sha256()
+        hash_object.update(object_bytes)
+        return hash_object.hexdigest()
+
+    def get_params(self):
+        return {}
 
     # TODO: validate params dict (raise if invalid keys)
     def update_params(self, params: Dict):
@@ -124,6 +155,12 @@ class Step():
         Returns:
             Union[pd.DataFrame, Dict]: The transformed data.
         """
+        def get_metadata(result: StepResult):
+            return {
+                **result.statistics.model_dump(),
+                "error": result.error,
+                "prompt": result.input
+            }
         if isinstance(data, pd.DataFrame):
             if verbose and is_dev:
                 from tqdm import tqdm
@@ -134,13 +171,17 @@ class Step():
             for r in results:
                 self._update_statistics(r.statistics)
             new_fields = pd.DataFrame([r.fields for r in results])
+            metadata = pd.DataFrame([get_metadata(r) for r in results])
             data[new_fields.columns] = new_fields
+            data[f"__{self.name}__"] = metadata
         else:
             result = self._run(data)
             self._update_statistics(result.statistics)
             if isinstance(data, pd.Series):
                 for key, value in result.fields.items():
                     data.loc[key] = value
+                data.loc[f"__{self.name}__"] = get_metadata(result)
             else:
                 data.update(result.fields)
+                data[f"__{self.name}__"] = get_metadata(result)
         return data

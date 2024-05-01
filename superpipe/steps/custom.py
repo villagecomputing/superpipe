@@ -35,6 +35,18 @@ class CustomStep(Step, Generic[T]):
         super().__init__(name)
         self.transform = transform
 
+    def get_params(self):
+        """
+        Returns the parameters of the step.
+
+        Returns:
+            Dict: A dictionary of the step's parameters.
+        """
+        return {
+            **super().get_params(),
+            "transform": self.transform.__name__
+        }
+
     def _run(self, row: Union[pd.Series, Dict]) -> Dict:
         """
         Applies the transformation function to a single row of data.

@@ -51,6 +51,18 @@ class LLMStructuredStep(LLMStep, Generic[T]):
         super().__init__(model, prompt, openai_args, name)
         self.out_schema = out_schema
 
+    def get_params(self):
+        """
+        Returns the parameters of the step.
+
+        Returns:
+            Dict: A dictionary of the step's parameters.
+        """
+        return {
+            **super().get_params(),
+            "out_schema": self.out_schema.model_json_schema()
+        }
+
     def _compile_structured_prompt(self, input: dict):
         """
         Compiles a structured prompt from the input data.
@@ -90,10 +102,7 @@ class LLMStructuredStep(LLMStep, Generic[T]):
             response = StructuredLLMResponse(
                 success=False, error=str(e), latency=0)
         statistics = self._get_row_statistics(response)
-        result = {f"__{self.name}__": {
-            **statistics.model_dump(),
-            "error": response.error,
-        }}
+        result = {}
         # TODO: how should we handle failure cases
         if response.success:
             content = response.content
@@ -104,4 +113,4 @@ class LLMStructuredStep(LLMStep, Generic[T]):
                         f"Step {self.name}: Missing field {field} in response {content}")
                 val = content.get(field)
                 result[field] = val if val is not None else ""
-        return StepResult(fields=result, statistics=statistics)
+        return StepResult(fields=result, statistics=statistics, error=response.error, input=compiled_prompt)
