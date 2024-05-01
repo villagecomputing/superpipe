@@ -193,7 +193,11 @@ def get_structured_llm_response_openai(
         args: CompletionCreateParamsNonStreaming = {}) -> StructuredLLMResponse:
     system = "You are a helpful assistant designed to output JSON."
     updated_args = {**args, "response_format": {"type": "json_object"}}
+
     response = get_llm_response_openai(prompt, model, updated_args, system)
+    if response.error:  # models before 1163 do not support response_format param
+        response = get_llm_response_openai(prompt, model, args, system)
+
     return StructuredLLMResponse(
         input_tokens=response.input_tokens,
         output_tokens=response.output_tokens,
