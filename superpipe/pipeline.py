@@ -144,7 +144,7 @@ class Pipeline:
         self.score = results.sum() / len(results)
         labels = self.data.label.str.lower()
         predicts = self.data.predict.str.lower()
-        self.labels = list(set(labels).union(predicts))
+        self.labels = sorted(list(set(labels).union(predicts)))
         self.cm = confusion_matrix(labels, predicts)
         return self.score
 
