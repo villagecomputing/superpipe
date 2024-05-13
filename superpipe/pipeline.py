@@ -71,7 +71,48 @@ class Pipeline:
         self.name = name or self.__class__.__name__
         self.statistics = PipelineStatistics()
 
-    def run(self, data: Union[pd.DataFrame, Dict], enable_logging=False, row_wise=True, verbose=True):
+    def run_experiment(self, data, verbose=True, description=None):
+        def run_steps(row):
+            for step in self.steps:
+                step.run(row, verbose)
+            return row
+
+        if studio_enabled():
+            from studio import run_pipeline_with_experiment, Dataset, create_experiment
+            if isinstance(data, pd.DataFrame):
+                dataset = Dataset(data=data)
+            elif isinstance(data, str):
+                dataset = Dataset(id=data)
+            elif isinstance(data, Dataset):
+                pass
+            experiment_id = create_experiment(
+                dataset_id=dataset.id,
+                name=self.name,
+                parameters=self.get_params(),
+                description=description)
+            run_steps = run_pipeline_with_experiment(
+                experiment_id, run_steps, self)
+            df = dataset.data
+            if verbose and is_dev:
+                from tqdm import tqdm
+                tqdm.pandas(desc=f"Running pipeline row-wise")
+                results = df.progress_apply(run_steps, axis=1)
+            else:
+                results = df.apply(run_steps, axis=1)
+            df[results.columns] = results
+            self.data = df
+            if self.evaluation_fn is not None:
+                self.evaluate()
+            self._aggregate_statistics(df)
+            return df
+        else:
+            raise ValueError("Superpipe Studio is not enabled")
+
+    def run(self,
+            data: Union[pd.DataFrame, Dict],
+            enable_logging=False,
+            row_wise=True,
+            verbose=True):
         def run_steps(row):
             for step in self.steps:
                 step.run(row, verbose)
