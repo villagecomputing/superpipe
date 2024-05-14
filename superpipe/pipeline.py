@@ -72,7 +72,7 @@ class Pipeline:
         self.statistics = PipelineStatistics()
 
     def run_experiment(self, data, verbose=True, description=None):
-        def run_steps(row):
+        def run_steps(row: pd.Series):
             for step in self.steps:
                 step.run(row, verbose)
             return row
@@ -80,7 +80,8 @@ class Pipeline:
         if studio_enabled():
             from studio import run_pipeline_with_experiment, Dataset, create_experiment
             if isinstance(data, pd.DataFrame):
-                dataset = Dataset(data=data)
+                dataset = Dataset(data=data, name=f"{self.name}_dataset")
+                print(f"Created dataset {dataset.id}")
             elif isinstance(data, str):
                 dataset = Dataset(id=data)
             elif isinstance(data, Dataset):
@@ -89,7 +90,9 @@ class Pipeline:
                 dataset_id=dataset.id,
                 name=self.name,
                 parameters=self.get_params(),
+                group_id=self.fingerprint(),
                 description=description)
+            print(f"Created experiment {experiment_id}")
             run_steps = run_pipeline_with_experiment(
                 experiment_id, run_steps, self)
             df = dataset.data
@@ -106,7 +109,8 @@ class Pipeline:
             self._aggregate_statistics(df)
             return df
         else:
-            raise ValueError("Superpipe Studio is not enabled")
+            raise ValueError(
+                "Superpipe Studio must be enabled to run experiments")
 
     def run(self,
             data: Union[pd.DataFrame, Dict],
