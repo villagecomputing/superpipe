@@ -82,7 +82,7 @@ class EmbeddingSearchStep(Step):
             **super().get_params(),
             "search_prompt": self.search_prompt.__name__,
             "embed_fn": self.embed_fn.__name__,
-            "candidates": self.candidates.__hash__() if self.candidates else None,
+            "candidates": tuple(self.candidates).__hash__() if self.candidates else None,
             "candidates_fn": self.candidates_fn.__name__ if self.candidates_fn else None,
             "k": self.k
         }
@@ -127,8 +127,10 @@ class EmbeddingSearchStep(Step):
             embeddings = self.embed_fn([prompt])
             D, I = index.search(embeddings, self.k)
             search_results = I.tolist()[0]
-            result = {
-                f"category{i+1}": candidates[search_results[i]] for i in range(self.k)}
+            result = {}
+            result[f"{self.name}"] = {
+                f"candidate{i+1}": candidates[search_results[i]] for i in range(self.k)
+            }
             return result
         result, statistics = with_statistics(run_search)()
         return StepResult(fields=result, statistics=statistics)

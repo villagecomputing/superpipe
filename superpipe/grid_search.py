@@ -5,6 +5,7 @@ import pandas as pd
 from typing import Dict, List
 from superpipe.pipeline import Pipeline
 from superpipe.util import df_apply_gradients
+from superpipe.config import studio_enabled
 
 
 class GridSearch:
@@ -78,13 +79,54 @@ class GridSearch:
 
     def _flatten_params_dict(params_dict: Dict) -> Dict:
         """
-        Flattens a dictionary of parameters into a single dictionary with concatenated keys.        
+        Flattens a dictionary of parameters into a single dictionary with concatenated keys.
         """
         def value_to_string(value):
             return value.__name__ if callable(value) else str(value)
         return {f"{step}__{param}": value_to_string(value)
                 for step, params in params_dict.items()
                 for param, value in params.items()}
+
+    def run_experiment(self, data, verbose=False):
+        if not studio_enabled():
+            raise ValueError(
+                "Superpipe Studio must be enabled to run experiments")
+
+        from studio import Dataset
+        if isinstance(data, pd.DataFrame):
+            dataset = Dataset(data=data, name=f"{self.pipeline.name}_dataset")
+            print(f"Created dataset {dataset.id}")
+        elif isinstance(data, str):
+            dataset = Dataset(id=data)
+        elif isinstance(data, Dataset):
+            dataset = data
+        results = []
+        n = len(self.params_list)
+        for i, params in enumerate(self.params_list):
+            # TODO: check for duplicate params because of steps overriding global params
+            if verbose:
+                print(f"Iteration {i+1} of {n}")
+                print("Params: ", params)
+            self.pipeline.update_params(params)
+            self.pipeline.run_experiment(dataset, verbose)
+            index = GridSearch._hash_params(params)
+            result = {
+                **GridSearch._flatten_params_dict(params),
+                'score': self.pipeline.score,
+                'input_cost': self.pipeline.statistics.input_cost,
+                'output_cost': self.pipeline.statistics.output_cost,
+                'total_latency': self.pipeline.statistics.total_latency,
+                'input_tokens': self.pipeline.statistics.input_tokens,
+                'output_tokens': self.pipeline.statistics.output_tokens,
+                'num_success': self.pipeline.statistics.num_success,
+                'num_failure': self.pipeline.statistics.num_failure,
+                'index': index
+            }
+            if verbose:
+                print("Result: ", result)
+            results.append(result)
+        self.results = pd.DataFrame(results)
+        self._update_best()
 
     def run(self, df: pd.DataFrame, output_dir=None, verbose=False, styled=True):
         """

@@ -77,40 +77,40 @@ class Pipeline:
                 step.run(row, verbose)
             return row
 
-        if studio_enabled():
-            from studio import run_pipeline_with_experiment, Dataset, create_experiment
-            if isinstance(data, pd.DataFrame):
-                dataset = Dataset(data=data, name=f"{self.name}_dataset")
-                print(f"Created dataset {dataset.id}")
-            elif isinstance(data, str):
-                dataset = Dataset(id=data)
-            elif isinstance(data, Dataset):
-                pass
-            experiment_id = create_experiment(
-                dataset_id=dataset.id,
-                name=self.name,
-                parameters=self.get_params(),
-                group_id=self.fingerprint(),
-                description=description)
-            print(f"Created experiment {experiment_id}")
-            run_steps = run_pipeline_with_experiment(
-                experiment_id, run_steps, self)
-            df = dataset.data
-            if verbose and is_dev:
-                from tqdm import tqdm
-                tqdm.pandas(desc=f"Running pipeline row-wise")
-                results = df.progress_apply(run_steps, axis=1)
-            else:
-                results = df.apply(run_steps, axis=1)
-            df[results.columns] = results
-            self.data = df
-            if self.evaluation_fn is not None:
-                self.evaluate()
-            self._aggregate_statistics(df)
-            return df
-        else:
+        if not studio_enabled():
             raise ValueError(
                 "Superpipe Studio must be enabled to run experiments")
+
+        from studio import run_pipeline_with_experiment, Dataset, create_experiment
+        if isinstance(data, pd.DataFrame):
+            dataset = Dataset(data=data, name=f"{self.name}_dataset")
+            print(f"Created dataset {dataset.id}")
+        elif isinstance(data, str):
+            dataset = Dataset(id=data)
+        elif isinstance(data, Dataset):
+            dataset = data
+        experiment_id = create_experiment(
+            dataset_id=dataset.id,
+            name=self.name,
+            parameters=self.get_params(),
+            group_id=self.fingerprint(),
+            description=description)
+        print(f"Created experiment {experiment_id}")
+        run_steps = run_pipeline_with_experiment(
+            experiment_id, run_steps, self)
+        df = dataset.data.copy()
+        if verbose and is_dev:
+            from tqdm import tqdm
+            tqdm.pandas(desc=f"Running pipeline row-wise")
+            results = df.progress_apply(run_steps, axis=1)
+        else:
+            results = df.apply(run_steps, axis=1)
+        df[results.columns] = results
+        self.data = df
+        if self.evaluation_fn is not None:
+            self.evaluate()
+        self._aggregate_statistics(df)
+        return df
 
     def run(self,
             data: Union[pd.DataFrame, Dict],
