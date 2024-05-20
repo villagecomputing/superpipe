@@ -14,6 +14,7 @@ def init_openai(api_key, base_url=None):
     openai_client = OpenAI(api_key=api_key, base_url=base_url)
     client_for_model[gpt35] = openai_client
     client_for_model[gpt4] = openai_client
+    client_for_model[gpt4o] = openai_client
 
 
 def init_anthropic(api_key):

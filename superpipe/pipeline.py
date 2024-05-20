@@ -75,6 +75,9 @@ class Pipeline:
         def run_steps(row: pd.Series):
             for step in self.steps:
                 step.run(row, verbose)
+            if self.evaluation_fn is not None:
+                row[f"__{self.evaluation_fn.__name__}__"] = float(self.evaluation_fn(
+                    row))
             return row
 
         if not studio_enabled():
@@ -106,9 +109,7 @@ class Pipeline:
         else:
             results = df.apply(run_steps, axis=1)
         df[results.columns] = results
-        self.data = df
-        if self.evaluation_fn is not None:
-            self.evaluate()
+        self._evaluate(df)
         self._aggregate_statistics(df)
         return df
 
@@ -120,6 +121,9 @@ class Pipeline:
         def run_steps(row):
             for step in self.steps:
                 step.run(row, verbose)
+            if self.evaluation_fn is not None:
+                row[f"__{self.evaluation_fn.__name__}__"] = float(self.evaluation_fn(
+                    row))
             return row
 
         # Note: currently running row-wise is ~40% slower than step-wise (because of memory overhead?)
@@ -141,10 +145,8 @@ class Pipeline:
             # logging not supported for step-wise execution
             for step in self.steps:
                 step.run(data, verbose)
-        if isinstance(data, pd.DataFrame):
-            self.data = data
-            if self.evaluation_fn is not None:
-                self.evaluate()
+
+        self._evaluate(data)
         self._aggregate_statistics(data)
         return data
 
@@ -172,18 +174,25 @@ class Pipeline:
             step_params = params.get(step.name, {})
             step.update_params({**global_params, **step_params})
 
-    def evaluate(self, evaluation_fn=None):
-        evaluation_fn = evaluation_fn or self.evaluation_fn
-        if evaluation_fn is None:
-            print("No evaluation function provided")
+    def _evaluate(self, data: Union[pd.DataFrame, Dict]):
+        if not self.evaluation_fn:
             return
-        elif self.data is None:
-            print("No data provided")
-            return
-        results = self.data.apply(lambda row: evaluation_fn(row), axis=1)
-        self.data[f"__{evaluation_fn.__name__}__"] = results
-        self.score = results.sum() / len(results)
-        return self.score
+        fn_name = self.evaluation_fn.__name__
+        if isinstance(data, pd.DataFrame):
+            if f"__{fn_name}__" in data.columns:
+                results = data[f"__{fn_name}__"]
+            else:
+                results = data.apply(
+                    lambda row: self.evaluation_fn(row), axis=1)
+                data[f"__{fn_name}__"] = results
+            self.score = results.sum() / len(results)
+        else:
+            if f"__{fn_name}__" in data:
+                result = data[f"__{fn_name}__"]
+            else:
+                result = float(self.evaluation_fn(data))
+                data[f"__{fn_name}__"] = result
+            self.score = result
 
     def _aggregate_statistics(self, data: Union[pd.DataFrame, Dict]):
         self.statistics = PipelineStatistics()

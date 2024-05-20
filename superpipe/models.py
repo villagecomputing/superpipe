@@ -1,5 +1,6 @@
 from typing import Dict, Tuple
 
+gpt4o = "gpt-4o"
 gpt4 = "gpt-4-turbo-preview"
 gpt35 = "gpt-3.5-turbo-0125"
 mixtral = "mistralai/Mixtral-8x7B-Instruct-v0.1"
