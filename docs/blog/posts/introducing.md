@@ -62,4 +62,4 @@ The result of this process is a rigorous understanding of the cost, speed, and a
 
 ## Learn more
 
-The best way to learn more about Superpipe by reading our [docs](https://superpipe.ai), checking out our [Github](https://github.com/villagecomputing/superpipe), or asking questions on our [Discord](https://discord.gg/paV2qcHmH7).
+The best way to learn more about Superpipe by reading our [docs](https://docs.superpipe.ai), checking out our [Github](https://github.com/villagecomputing/superpipe), or asking questions on our [Discord](https://discord.gg/paV2qcHmH7).
