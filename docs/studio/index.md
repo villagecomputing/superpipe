@@ -10,18 +10,18 @@ Superpipe Studio is a Next JS app that can be run locally or self-hosted with Ve
 
 **Demo**
 
-<div style="position: relative; padding-bottom: 67.5%; height: 0;"><iframe src="https://www.loom.com/embed/fba6211c77204f35a70a50090d1e7001?sid=8f228e4c-27be-4dfa-a6ec-8befa6a55f54" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+<div style="position: relative; padding-bottom: 67.5%; height: 0;"><iframe width="560" height="315" src="https://www.youtube.com/embed/fKKmUm12LDY?si=Qj1mjtoStpdjG6PU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
 
 ## Running Superpipe Studio
 
-To get Superpipe Studio running locally or to self-host with Vercel follow the instructions in the [Studio Github](https://github.com/villagecomputing/studio) readme.
+To run Superpipe Studio locally follow instructions in [Running Studio locally](https://github.com/villagecomputing/studio/tree/aman/more-readme?tab=readme-ov-file#running-studio-locally) or to self-host with Vercel follow instructions in [Deplying Studio with Vercel](https://github.com/villagecomputing/studio/tree/aman/more-readme?tab=readme-ov-file#deploying-studio-with-vercel).
 
 ## Usage with Superpipe
 
 1. Install the superpipe-studio python library with `pip install superpipe-studio`. Also make sure you're on the latest version of superpipe (`pip install superpipe-py -U`).
 2. Set the following environment variables:
    1. `SUPERPIPE_STUDIO_URL` = the url where your studio instance is hosted
-   2. `SUPERPIPE_API_KEY` = your Superpipe API key if running with authentication (see the [Authentication](https://github.com/villagecomputing/studio) section)
+   2. `SUPERPIPE_API_KEY` = your Superpipe API key if running Studio with authentication enabled (see the [Authenticating Superpipe Studio requests](https://github.com/villagecomputing/studio/tree/aman/more-readme?tab=readme-ov-file#authenticating-superpipe-sdk-requests) section of the Studio readme)
 
 ### Logging
 
@@ -47,12 +47,16 @@ from studio import Dataset
 import pandas as pd
 
 df = pd.DataFrame(...)
-dataset = Dataset(data=df, name="furniture", ground_truths=["brand_name"])
+dataset = Dataset(data=df, name="furniture")
 ```
 
 **Ground truth columns**
 
-TODO
+You can optionally specify a list of ground truth columns which will be shown separately in the Studio UI and can be edited. This lets you create datasets with accurate ground truth labels that can be used to evaluate your pipelines.
+
+```python
+dataset = Dataset(data=df, name="furniture", ground_truths=["brand_name"])
+```
 
 You can also download a dataset that already exists in Studio by passing in its `id`.
 
@@ -76,9 +80,15 @@ To run a pipeline experiment, define your pipeline as usual, call `pipeline.run_
 
 ```python
 import pandas as pd
+from studio import Dataset
 
+# running an experiment on a dataframe implicitly creates a new dataset
 df = pd.DataFrame(...)
 pipeline.run_experiment(data=df)
+
+# running an experiment on an existing dataset
+dataset = Dataset(data=df, name="furniture")
+pipeline.run_experiment(data=dataset)
 ```
 
 To run a grid search experiment, define your grid search as usual, call `grid_search.run_experiment`. Everything else is the same as a pipeline experiment, but you will see one experiment created for each set of parameters in the grid search.
